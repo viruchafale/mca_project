@@ -67,3 +67,13 @@ See [current interfaces](phase-3-interfaces.md). Phase-4 adds LW/SW/BEQ/BNE.
 
 Later phases complete memory/branch execution and extend fault handling. Current
 tests establish arithmetic execution and component behavior, not complete RV32I compliance.
+
+## Current Phase-4 extension
+
+All ten target instructions now execute. The branch unit selects current PC plus
+B-immediate or PC+4. RAM is connected to effective-address ALU output, store data
+rs2 and memory writeback for LW. Reset preserves RAM but cancels stores.
+Diagnostic cause 11 covers invalid data access or a taken misaligned branch.
+Only taken targets are alignment-checked. The compatibility parameter selects
+old arithmetic-only behavior for historical regression tests; default is full mode.
+See [current interfaces](phase-4-interfaces.md) for the exact gating and signals.

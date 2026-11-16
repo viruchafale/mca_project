@@ -9,7 +9,68 @@ Assistant support should be disclosed when used; it does not establish that a
 member has personally reviewed, run or understood the work. Names in an assignment
 table alone are not completed contributions.
 
-## Current handoff: Pratyush on phase-3
+## Current handoff: Rudraksh on phase-4
+
+Pratyush's four phase-3 documentation commits through aa089e5 were reviewed and
+preserved without changes. See [review](docs/reviews/pratyush-phase-3-review.md).
+Phase-4 integrates LW, SW, BEQ and BNE with the existing arithmetic CPU. The lead
+prepares one implementation commit; publication requires explicit lead approval.
+
+After publication, Rudraksh owns these separate documentation files:
+
+| File | Substantive contribution |
+|---|---|
+| docs/verification/test-plan.md | Map all ten instructions, branch outcomes, memory boundaries, faults and reset to actual tests |
+| docs/verification/simulation-results.md | Record a personally performed run, tool/version, source commit and observed results; explain selected actual waveforms |
+| docs/verification/verification-checklist.md | Complete an evidence-linked checklist and distinguish passed, pending and unavailable items |
+
+No RTL or testbench development is required. Read docs/phase-4-interfaces.md and
+reports/verification/phase-4.md. Current assigned files contain task outlines,
+not completed personal work. Existing lead-generated logs may be cited with
+attribution; they do not establish a personal run. If tools are unavailable,
+record that fact and document the evidence actually inspected. Add selected real
+screenshots under docs/verification/waveforms/ with signal names, cycle context,
+source commit and captions. Never invent screenshots or results. Keep generated
+VCDs/executables under ignored build/ and avoid committing large generated files.
+
+Use your own GitHub authentication, collaborator access and verified author email.
+Replace the email placeholder and use your preferred full name:
+
+```bash
+git clone --branch phase-4 https://github.com/viruchafale/mca_project.git mca_project-rudraksh
+cd mca_project-rudraksh
+git config --local user.name "Rudraksh"
+git config --local user.email "YOUR_VERIFIED_GITHUB_EMAIL"
+git config --local pull.ff only
+git fetch origin
+git switch phase-4
+git pull --ff-only origin phase-4
+git status --short --branch
+python3 tools/run_tests.py --wave --self-check
+```
+
+Install Icarus Verilog and Python 3 beforehand. Open actual build/*.vcd files in
+GTKWave or another VCD viewer. Record real outcomes even if a run fails.
+After substantive documentation/evidence work and personal review:
+
+```bash
+git diff -- docs/verification
+git status --short --branch
+git add -- docs/verification/test-plan.md docs/verification/simulation-results.md docs/verification/verification-checklist.md
+# If you created real, reviewed screenshots, stage only those specific files too.
+git diff --cached --check
+git diff --cached
+git commit -m "docs: document phase-4 verification and simulation evidence"
+git show --stat --format=fuller HEAD
+git push origin HEAD:refs/heads/phase-4
+```
+
+Stop on conflicts or rejected pushes; do not force or overwrite another person's
+work. Send the actual commit URL to the lead. Phase-5 starts from the accepted
+phase-4 tip including Rudraksh's contribution. Main stays untouched. Branch commit
+history provides attribution even when default-branch contribution graphs omit it.
+
+## Historical handoff: Pratyush on phase-3
 
 Kaustubh's contribution 537996c was reviewed and accepted for development
 progression. His three original files are preserved. See

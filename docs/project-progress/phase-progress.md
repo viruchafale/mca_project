@@ -1,5 +1,8 @@
 # Phase progress
 
+The opening table records the earlier phase-3 snapshot. The current phase-4
+status is recorded at the end of this document.
+
 | Gate | Current status |
 |---|---|
 | Main baseline | fa7982481e52b5c60d7cccb1480b11c645efcf06 |
@@ -59,3 +62,18 @@ corrections. New arithmetic execution and fault evidence is recorded under
 reports/verification/phase-3.md. Member 3, Pratyush, owns datapath/control documents;
 the lead has not made commits under his identity. main, phase-1 and phase-2 are
 not modified by phase-3 development.
+
+## Current progression: Phase-4
+
+| Item | Current status |
+|---|---|
+| Phase-3 | Published lead cfe3b69 plus Pratyush's four accepted commits through aa089e5 |
+| Member preservation | All four Pratyush documents inherited byte-for-byte; review errata separate |
+| Phase-4 implementation | All ten instructions integrated locally, including memory and conditional branches |
+| Verification | 276,741 HDL checks passed; 38-instruction independent reference covers all ten and four branch outcomes |
+| Publication | Prepared as one implementation commit; push requires explicit approval |
+| Rudraksh | Test plan, results and verification-checklist outlines prepared; own contribution pending |
+| Phase-5 | Not started; wait for Rudraksh's accepted handoff |
+
+Earlier sections are historical snapshots. Phase-4 is based on accepted aa089e5;
+main and previous phase tips are preserved. No member identity is impersonated.

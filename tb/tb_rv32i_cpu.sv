@@ -8,7 +8,7 @@ module tb_rv32i_cpu;
     integer checks=0,i;
     integer destinations[0:16];
     reg [31:0] results[0:16],final_values[0:31];
-    rv32i_cpu dut(.clk(clk),.reset(reset),.debug_pc(pc),.debug_instruction(instruction),
+    rv32i_cpu #(.INIT_FILE("programs/arithmetic_smoke.hex")) dut(.clk(clk),.reset(reset),.debug_pc(pc),.debug_instruction(instruction),
         .debug_reg_write(wr),.debug_rd(rd),.debug_write_data(write_data),
         .fault(fault),.fault_cause(cause));
     task check(input bit condition,input string label);

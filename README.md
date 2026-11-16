@@ -2,8 +2,8 @@
 
 College project by Viraj, Kaustubh, Pratyush, Rudraksh and Bhargav.
 
-**Current development milestone: phase-3 (arithmetic CPU integration).**
-The core executes ADD, SUB, AND, OR, XOR and ADDI. LW/SW/BEQ/BNE remain for phase-4.
+**Current development milestone: phase-4 (complete ten-instruction subset).**
+The core executes ADD, SUB, AND, OR, XOR, ADDI, LW, SW, BEQ and BNE.
 The `main` branch is intentionally left at its original commit.
 
 ## What is implemented
@@ -17,11 +17,14 @@ The `main` branch is intentionally left at its original commit.
 - Combinational I/S/B immediate generator with explicit format selection.
 - Checked 1 KiB data RAM with asynchronous read, synchronous write and reset preservation.
 - Independent encoding checks for ten hand-calculated target instruction words.
-- Five-operation ALU, exact arithmetic decoder, writeback mux and integrated arithmetic CPU.
-- Sticky fetch/illegal-instruction diagnostic faults with write suppression and reset recovery.
+- Five-operation ALU, exact ten-instruction decoder, memory writeback and integrated CPU.
+- BEQ/BNE target/comparison unit and memory/branch execution with checked addresses.
+- Sticky fetch, illegal-instruction and data/branch-alignment faults with side-effect suppression and reset recovery.
 
-The original fetch test still checks PC/ROM composition. The new CPU test executes
-seventeen arithmetic instructions and checks the architectural register results.
+The original fetch and seventeen-instruction arithmetic tests remain as regressions.
+The full-subset test compares 38 executed instructions against an independent
+software trace, then checks final registers and RAM. Dedicated fault/reset suites
+check safe side-effect gating. See [current verification](reports/verification/phase-4.md).
 
 ## Run
 
@@ -93,19 +96,35 @@ See the review corrections linked below and CONTRIBUTING.md for the current hand
 
 ## Current limits
 
-No CPU load/store or branch instruction execution is implemented yet.
+CPU word loads/stores and BEQ/BNE are integrated with alignment/range checks.
 No synthesis, hardware timing or FPGA claim is made.
 No prototype video or IEEE report is complete yet.
 
-## Phase-3 handoff
+## Historical Phase-3 handoff
 
 Phase-3 starts from Kaustubh's contribution 537996c. His original documents are
 preserved as historical phase-2 material; read the [review corrections](docs/reviews/kaustubh-phase-2-review.md)
 alongside them. All five of his new encodings checked correctly, and the original
 13,223-check regression passed again before phase-3 work.
 
-See [current CPU interfaces](docs/phase-3-interfaces.md) and [phase-3 evidence](reports/verification/phase-3.md).
+The following handoff records the earlier phase-3 milestone; it is now complete.
+See [phase-3 CPU interfaces](docs/phase-3-interfaces.md) and [phase-3 evidence](reports/verification/phase-3.md).
 Pratyush owns datapath.md, control-unit.md and control-signals.md under docs/architecture/.
 Those files are assignments, not a claim of completed member work. Phase-4 waits
 for his substantive contribution. Current phase-3 implementation is local until
 its explicitly approved push.
+
+## Phase-4 handoff
+
+Pratyush's four documentation commits through aa089e5 are inherited unchanged;
+read the [review notes](docs/reviews/pratyush-phase-3-review.md) with his phase-3 snapshots.
+The current [complete-subset interfaces](docs/phase-4-interfaces.md) supersede older
+arithmetic-only descriptions. An explicit legacy parameter preserves those old tests.
+
+The [phase-4 report](reports/verification/phase-4.md) records 276,741 passing HDL
+checks, plus the independent 38-instruction reference trace and software checks.
+The default program is programs/full_isa.hex. It ends in a legal self-loop, not HALT.
+
+Rudraksh owns the test plan, simulation results and verification checklist under
+docs/verification/. His substantive evidence organization/own-account commit remain
+pending. Phase-4 publication requires explicit approval; phase-5 waits for his handoff.

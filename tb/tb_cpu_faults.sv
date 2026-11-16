@@ -12,7 +12,7 @@ module tb_cpu_faults;
         wire wr,fault;
         wire [1:0] cause;
         integer j;
-        rv32i_cpu #(.INIT_FILE("programs/phase3_faults.hex"),.RESET_PC(START)) dut(
+        rv32i_cpu #(.INIT_FILE("programs/phase3_faults.hex"),.RESET_PC(START),.ARITHMETIC_ONLY(1)) dut(
             .clk(clk),.reset(reset),.debug_pc(pc),.debug_instruction(instruction),
             .debug_reg_write(wr),.debug_rd(),.debug_write_data(data),
             .fault(fault),.fault_cause(cause));

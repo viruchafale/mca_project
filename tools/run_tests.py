@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reproduce cumulative phase-3 HDL checks. No third-party Python packages required."""
+"""Reproduce cumulative phase-4 HDL checks. No third-party Python packages required."""
 import argparse
 from datetime import datetime, timezone
 import hashlib
@@ -16,11 +16,12 @@ BUILD = ROOT / "build"
 RTL = [ROOT / "rtl" / name for name in [
     "pc.v", "instruction_memory.v", "register_file.v",
     "immediate_generator.v", "data_memory.v", "alu.v", "control_unit.v",
-    "writeback_mux.v", "rv32i_cpu.v",
+    "writeback_mux.v", "rv32i_cpu.v", "branch_unit.v",
 ]]
 BENCHES = ["tb_pc", "tb_instruction_memory", "tb_fetch", "tb_register_file",
            "tb_immediate_generator", "tb_data_memory", "tb_alu", "tb_control_unit",
-           "tb_writeback_mux", "tb_rv32i_cpu", "tb_cpu_faults"]
+           "tb_writeback_mux", "tb_rv32i_cpu", "tb_cpu_faults", "tb_control_unit_full",
+           "tb_branch_unit", "tb_full_isa", "tb_full_faults", "tb_cpu_reset_memory"]
 
 
 def run(command, timeout=15):
@@ -53,11 +54,13 @@ def validate_inputs():
     required = RTL + [ROOT / "tb" / (top + ".sv") for top in BENCHES]
     required += [ROOT / "programs/fetch_smoke.hex", ROOT / "programs/encoding-vectors.json",
                  ROOT / "programs/arithmetic_smoke.hex", ROOT / "programs/phase3_faults.hex",
-                 ROOT / "tools/check_encodings.py"]
+                 ROOT / "tools/check_encodings.py", ROOT / "tools/phase4_reference.py",
+                 ROOT / "programs/full_isa.expected.json"]
     for path in required:
         if not path.is_file():
             raise RuntimeError("missing required input: " + str(path.relative_to(ROOT)))
-    for name in ["fetch_smoke.hex", "arithmetic_smoke.hex", "phase3_faults.hex"]:
+    for name in ["fetch_smoke.hex", "arithmetic_smoke.hex", "phase3_faults.hex",
+                 "full_isa.hex", "phase4_faults.hex", "reset_memory.hex"]:
         image = (ROOT / "programs" / name).read_text().split()
         if len(image) != 256 or any(not re.fullmatch(r"[0-9a-fA-F]{8}", x) for x in image):
             raise RuntimeError(name + " must have exactly 256 hexadecimal words")
@@ -143,6 +146,13 @@ def main():
             raise RuntimeError("instruction encoding validation failed\n" + encoding_log)
         report["encoding_checks"] = int(encoding_pass.group(1))
         print(encoding_result.stdout.strip())
+        reference_result = run([sys.executable, str(ROOT / "tools/phase4_reference.py")])
+        reference_log = reference_result.stdout + reference_result.stderr
+        (BUILD / "phase4_reference.log").write_text(reference_log)
+        if reference_result.returncode or not reference_result.stdout.startswith("PASS: reference"):
+            raise RuntimeError("independent reference failed: " + reference_log)
+        report["reference"] = json.loads((BUILD / "phase4_reference.json").read_text())
+        print(reference_result.stdout.strip())
         report["lint"] = []
         for path in RTL:
             top = path.stem
@@ -172,7 +182,7 @@ def main():
                 report["harness_probes"] = harness_self_check(compiler, runtime)
         report["status"] = "pass"
         report["checks"] = sum(test["checks"] for test in report["tests"])
-        print("PASS: phase-3 checks=" + str(report["checks"]))
+        print("PASS: phase-4 checks=" + str(report["checks"]))
         return 0
     except (RuntimeError, subprocess.TimeoutExpired, OSError) as error:
         report["status"] = "fail"

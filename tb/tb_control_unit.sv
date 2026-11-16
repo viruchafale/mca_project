@@ -5,7 +5,7 @@ module tb_control_unit;
     wire [2:0] alu_operation;
     integer checks=0,op,f3,f7,expected_operation;
     reg expected_valid,expected_immediate;
-    control_unit dut(instruction,instruction_valid,reg_write,alu_src_immediate,alu_operation);
+    control_unit #(.ARITHMETIC_ONLY(1)) dut(.instruction(instruction),.instruction_valid(instruction_valid),.reg_write(reg_write),.alu_src_immediate(alu_src_immediate),.alu_operation(alu_operation));
     initial begin
         // Exhaustive opcode/funct3/funct7 classes. Register fields stay nonzero.
         // Omit enormous decoder VCD; the CPU waveform supplies integration evidence.
