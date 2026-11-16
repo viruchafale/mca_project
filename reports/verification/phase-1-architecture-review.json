@@ -1,0 +1,129 @@
+{
+  "purpose": "Assistant-assisted architecture evidence review requested by Viraj",
+  "source_commit_at_run": "d9c183d846d800331417283c321f80effac08200",
+  "working_tree_dirty_at_run": false,
+  "started_utc": "2026-11-16T10:29:37.218773+00:00",
+  "compiler_version": "Icarus Verilog version 13.0 (stable) (v13_0)",
+  "command": "python3 tools/run_tests.py --wave --self-check",
+  "hdl_checks": 41,
+  "tests": [
+    {
+      "top": "tb_pc",
+      "checks": 10,
+      "status": "pass"
+    },
+    {
+      "top": "tb_instruction_memory",
+      "checks": 20,
+      "status": "pass"
+    },
+    {
+      "top": "tb_fetch",
+      "checks": 11,
+      "status": "pass"
+    }
+  ],
+  "runner_probes": [
+    "fatal",
+    "no_summary",
+    "timeout"
+  ],
+  "input_sha256": {
+    "Makefile": "0d51cad9b9d884294ca9cdbc2e570acb79a7df00c9baa40b0fbca6d850fc036b",
+    "programs/fetch_smoke.S": "e49f507498f315b3787b73ff219404957832637c0abba418e807fe720dd4ddf5",
+    "programs/fetch_smoke.hex": "01c58fd6f7c5ba74957df336618353d8c396390ac30b36ce9a4f5a0c9ce72c60",
+    "rtl/instruction_memory.v": "ea9b61a15a10f7d80825a73bf5449237caab9470c67267d65b1449ccce627790",
+    "rtl/pc.v": "4403fbe3c94f08dbd4533a3d629e3e5847fc6f30279c25e5450e89a22e2b23d3",
+    "tb/tb_fetch.sv": "83dcfd09b4fbbc0bc0083bde60fe2ff5aa9b44d7f1e61b955e9798e39c8eca67",
+    "tb/tb_instruction_memory.sv": "3fcc5a6689953dc8a20a36a6f5a0d23f838e22dd11dbe084456c8cb167323281",
+    "tb/tb_pc.sv": "1e9d88d76307717aa8914fab59af6c52d06e5a90aa9159afa3d62a1e9dcbc428",
+    "tools/run_tests.py": "16bbccd070d465083d0a25e9888e043b3aacdd9e753686a21f26957e0b6f6967"
+  },
+  "waveforms": {
+    "tb_pc": {
+      "path": "build/tb_pc.vcd",
+      "sha256": "b3761244cc2a9d1207ff5e62468c6134710991eda45e9b6c290b77eaf8ddf3b4",
+      "bytes": 1851,
+      "simulator_log": "VCD info: dumpfile build/tb_pc.vcd opened for output.\nPASS: tb_pc checks=10\n/Users/viru/Documents/Codex/2026-11-16/new-chat-2/mca_project/tb/tb_pc.sv:41: $finish called at 72000 (1ps)\n"
+    },
+    "tb_instruction_memory": {
+      "path": "build/tb_instruction_memory.vcd",
+      "sha256": "d1659863790b675f1ed51947c4c4e8d09d2ac0e882ba143d0d7e4c3a54b17137",
+      "bytes": 3342,
+      "simulator_log": "VCD info: dumpfile build/tb_instruction_memory.vcd opened for output.\nPASS: tb_instruction_memory checks=20\n/Users/viru/Documents/Codex/2026-11-16/new-chat-2/mca_project/tb/tb_instruction_memory.sv:46: $finish called at 19000 (1ps)\n"
+    },
+    "tb_fetch": {
+      "path": "build/tb_fetch.vcd",
+      "sha256": "07cba64a4187d2941f3528fd9a30f353c74fc7c19b1271d270261d730d3e4bb2",
+      "bytes": 22127,
+      "simulator_log": "VCD info: dumpfile build/tb_fetch.vcd opened for output.\nPASS: tb_fetch checks=11\n/Users/viru/Documents/Codex/2026-11-16/new-chat-2/mca_project/tb/tb_fetch.sv:48: $finish called at 2670000 (1ps)\n"
+    }
+  },
+  "fetch_samples": [
+    {
+      "time_ns": 5,
+      "reset": "1",
+      "enable": "1",
+      "address": "00000000",
+      "address_valid": "1",
+      "instruction": "00500093"
+    },
+    {
+      "time_ns": 15,
+      "reset": "0",
+      "enable": "1",
+      "address": "00000004",
+      "address_valid": "1",
+      "instruction": "00a00113"
+    },
+    {
+      "time_ns": 55,
+      "reset": "0",
+      "enable": "1",
+      "address": "00000014",
+      "address_valid": "1",
+      "instruction": "00418463"
+    },
+    {
+      "time_ns": 65,
+      "reset": "0",
+      "enable": "1",
+      "address": "00000018",
+      "address_valid": "1",
+      "instruction": "002082b3"
+    },
+    {
+      "time_ns": 75,
+      "reset": "0",
+      "enable": "1",
+      "address": "0000001c",
+      "address_valid": "1",
+      "instruction": "00000063"
+    },
+    {
+      "time_ns": 85,
+      "reset": "0",
+      "enable": "0",
+      "address": "0000001c",
+      "address_valid": "1",
+      "instruction": "00000063"
+    },
+    {
+      "time_ns": 105,
+      "reset": "1",
+      "enable": "0",
+      "address": "00000000",
+      "address_valid": "1",
+      "instruction": "00500093"
+    },
+    {
+      "time_ns": 2665,
+      "reset": "0",
+      "enable": "1",
+      "address": "00000400",
+      "address_valid": "0",
+      "instruction": "00000000"
+    }
+  ],
+  "human_review_status": "Not asserted by this assistant-prepared record"
+}
