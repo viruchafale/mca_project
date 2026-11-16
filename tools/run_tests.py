@@ -182,7 +182,7 @@ def main():
                 report["harness_probes"] = harness_self_check(compiler, runtime)
         report["status"] = "pass"
         report["checks"] = sum(test["checks"] for test in report["tests"])
-        print("PASS: phase-4 checks=" + str(report["checks"]))
+        print("PASS: phase-5 checks=" + str(report["checks"]))
         return 0
     except (RuntimeError, subprocess.TimeoutExpired, OSError) as error:
         report["status"] = "fail"

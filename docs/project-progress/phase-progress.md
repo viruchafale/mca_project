@@ -77,3 +77,21 @@ not modified by phase-3 development.
 
 Earlier sections are historical snapshots. Phase-4 is based on accepted aa089e5;
 main and previous phase tips are preserved. No member identity is impersonated.
+
+## Current progression: Phase-5
+
+Phase-5 starts at accepted c90f577 including all four Bhargav commits. Their
+original files are preserved except this progress record gains the current status.
+Main and prior phase branches remain unchanged by Phase-5 development.
+
+- Implemented generic synthesis, strict structural checks and port-only netlist trace validation.
+- Corrected ROM synthesis initialization masking while preserving simulation padding.
+- Prepared report/reference/demo/interview/submission drafts and both academic checklists.
+- Latest results: reports/verification/phase-5-manifest.json and reports/synthesis/phase-5.md.
+- Publication pending explicit approval; one lead implementation commit prepared.
+- Rudraksh's substantive personal report/artefact review and own-account commits pending.
+- Actual video, IEEE PDF export and required graphical screenshots pending.
+- FPGA mapping/timing/deployment unavailable; no hardware claim.
+
+Earlier sections are milestone snapshots. Read the current submission index and
+separate review notes before reusing historical wording in the final report.

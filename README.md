@@ -2,7 +2,7 @@
 
 College project by Viraj, Kaustubh, Pratyush, Rudraksh and Bhargav.
 
-**Current development milestone: phase-4 (complete ten-instruction subset).**
+**Current development milestone: phase-5 (synthesis and final artefact preparation).**
 The core executes ADD, SUB, AND, OR, XOR, ADDI, LW, SW, BEQ and BNE.
 The `main` branch is intentionally left at its original commit.
 
@@ -97,7 +97,8 @@ See the review corrections linked below and CONTRIBUTING.md for the current hand
 ## Current limits
 
 CPU word loads/stores and BEQ/BNE are integrated with alignment/range checks.
-No synthesis, hardware timing or FPGA claim is made.
+Generic Yosys synthesis and port-only netlist trace validation are available.
+Hardware timing, Fmax and FPGA deployment remain unmeasured.
 No prototype video or IEEE report is complete yet.
 
 ## Historical Phase-3 handoff
@@ -128,3 +129,29 @@ The default program is programs/full_isa.hex. It ends in a legal self-loop, not 
 Bhargav owns the test plan, simulation results and verification checklist under
 docs/verification/. His substantive evidence organization/own-account commit remain
 pending. Phase-4 publication requires explicit approval; phase-5 waits for his handoff.
+
+## Phase-5 synthesis and final artefacts
+
+Bhargav's four Phase-4 documentation commits through c90f577 are inherited;
+[review qualifications](docs/reviews/bhargav-phase-4-review.md) accompany them.
+Phase-5 fixes synthesis ROM initialization masking and adds reproducible generic
+synthesis and an independent trace check against the generated netlist.
+
+```bash
+make synth       # Yosys generic cells; YOSYS may select yowasp-yosys
+make netlist     # synthesis, reference generation and port-only simulation
+make verify      # full RTL regression, synthesis and netlist check
+```
+
+Yosys and Icarus must be installed; downloaded tools are not committed. Use the
+same IVERILOG/VVP/IVL_BASE environment overrides documented above. YoWASP can be
+installed in a separate virtual environment with `python3 -m pip install yowasp-yosys`;
+set YOSYS to its executable. This run used yowasp-yosys 0.71.0.0.post1285.
+All synthesis outputs stay in build/synthesis/. See the
+[resource report](reports/synthesis/phase-5.md),
+[final report draft](docs/project-report/final-report.md) and
+[submission index](docs/project-report/submission-index.md).
+
+Rudraksh owns the final report/artifact review. Drafts do not establish his personal
+contribution. IEEE export/author approval, a real demo video and any required
+screenshots remain pending. Main remains untouched; publication needs approval.

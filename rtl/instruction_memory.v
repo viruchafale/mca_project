@@ -21,8 +21,17 @@ module instruction_memory #(
     assign instruction = address_valid ? words[address[9:2]] : 32'h0000_0000;
 
     initial begin
+        // Simulation supports partial images with NOP padding. For synthesis,
+        // use exactly one initializer per word: a full 256-word image or NOPs.
+        // Mixing procedural defaults and readmemh can mask the image in Yosys.
+`ifndef SYNTHESIS
         for (i = 0; i < 256; i = i + 1)
             words[i] = NOP;
+`else
+        if (INIT_FILE == "")
+            for (i = 0; i < 256; i = i + 1)
+                words[i] = NOP;
+`endif
         if (INIT_FILE != "") begin
 `ifndef SYNTHESIS
             image_file = $fopen(INIT_FILE, "r");

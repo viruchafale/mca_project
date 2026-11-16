@@ -1,0 +1,2 @@
+PASS: tb_writeback_mux checks=20
+/Users/viru/Documents/Codex/2026-11-16/new-chat-2/mca_project/tb/tb_writeback_mux.sv:16: $finish called at 20000 (1ps)

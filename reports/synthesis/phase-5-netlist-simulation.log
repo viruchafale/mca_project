@@ -1,0 +1,2 @@
+PASS: tb_netlist_isa checks=163
+tb/tb_netlist_isa.sv:37: $finish called at 421000 (1ps)

@@ -9,7 +9,50 @@ Assistant support should be disclosed when used; it does not establish that a
 member has personally reviewed, run or understood the work. Names in an assignment
 table alone are not completed contributions.
 
-## Current handoff: Bhargav on phase-4
+## Current handoff: Rudraksh on phase-5
+
+Bhargav's four verification documentation commits through c90f577 are accepted
+for progression and inherited unchanged. See docs/reviews/bhargav-phase-4-review.md
+for technical qualifications. Personal execution/rehearsal claims remain bounded
+by his recorded pending sign-off.
+
+The lead prepares one Phase-5 implementation commit with synthesis tooling,
+netlist validation and report drafts. After approved publication, Rudraksh owns:
+
+| Files | Substantive personal work |
+|---|---|
+| docs/project-report/phase-1-report.md | Confirm actual academic cutoff; review proposal and member attribution |
+| docs/project-report/final-report.md and references.md | Validate evidence/citations; refine discussion and produce required IEEE export |
+| docs/project-progress/deliverables.md and phase-progress.md | Audit actual submission status and commit/evidence links |
+| docs/project-report/demo-video.md, interview-preparation.md, submission-index.md | Organize real recording/link, author reviews and final package |
+
+No RTL/testbench coding is required. These are lead-assisted drafts, not a claim
+that Rudraksh has contributed. Make substantive reviewed changes using your own
+GitHub account and verified email. Do not fabricate missing video, screenshots,
+FPGA measurements or completed personal reviews.
+
+```bash
+git clone --branch phase-5 https://github.com/viruchafale/mca_project.git mca_project-rudraksh
+cd mca_project-rudraksh
+git config --local user.name "Rudraksh"
+git config --local user.email "YOUR_VERIFIED_GITHUB_EMAIL"
+git config --local pull.ff only
+git fetch origin
+git switch phase-5
+git pull --ff-only origin phase-5
+git status --short --branch
+```
+
+Replace placeholders with your own actual details. Review source/evidence first.
+Stage only exact changed documentation files, inspect git diff --cached and
+run git diff --cached --check before a substantive commit. Recommended message:
+`docs: review academic reports and final submission artefacts`.
+Push only to phase-5 after explicit approval: `git push origin HEAD:refs/heads/phase-5`.
+Stop on conflicts/rejections; never force or change main. Send actual commit URLs
+for review. Four substantive work packages may be committed separately when
+requested; do not create artificial changes or empty commits.
+
+## Historical handoff: Bhargav on phase-4
 
 Pratyush's four phase-3 documentation commits through aa089e5 were reviewed and
 preserved without changes. See [review](docs/reviews/pratyush-phase-3-review.md).
