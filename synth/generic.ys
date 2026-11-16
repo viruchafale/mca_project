@@ -1,0 +1,8 @@
+# Run from repository root. Generic cells, not a device or timing result.
+read_verilog -D SYNTHESIS rtl/pc.v rtl/instruction_memory.v rtl/register_file.v rtl/immediate_generator.v rtl/data_memory.v rtl/alu.v rtl/control_unit.v rtl/writeback_mux.v rtl/branch_unit.v rtl/rv32i_cpu.v
+hierarchy -check -top rv32i_cpu
+synth -top rv32i_cpu
+check -assert
+tee -o build/synthesis/stat.json stat -json
+write_json build/synthesis/netlist.json
+write_verilog -noattr build/synthesis/netlist.v

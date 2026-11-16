@@ -1,0 +1,10 @@
+{
+  "status": "pass",
+  "scope": "38-instruction port-only netlist trace smoke test, not equivalence proof",
+  "input_sha256": {
+    "build/synthesis/netlist.v": "d2b6d113feb73f119b04cbcab4754207bc04d9fef8490089c153385ad5b6f24d",
+    "build/full_isa.trace": "66596d242fbe9075ac5f1d478b7b38b09df81078e0c723f0072afabb96eeae56",
+    "tb/tb_netlist_isa.sv": "27e30aad382e1ca4fdb862497ced27b8dad2caf3825d5e59128b6cc90d721f24"
+  },
+  "summary": "PASS: tb_netlist_isa checks=163\ntb/tb_netlist_isa.sv:37: $finish called at 421000 (1ps)"
+}

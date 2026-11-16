@@ -1,0 +1,16 @@
+build/
+__pycache__/
+*.py[cod]
+*.vvp
+*.vcd
+*.fst
+.DS_Store
+.env
+.env.*
+!.env.example
+# Report compilation intermediates
+*.aux
+docs/project-report/*.log
+*.out
+*.toc
+*.synctex.gz

@@ -1,0 +1,3 @@
+VCD info: dumpfile build/tb_full_faults.vcd opened for output.
+PASS: tb_full_faults checks=72
+/Users/viru/Documents/Codex/2026-11-16/new-chat-2/mca_project/tb/tb_full_faults.sv:40: $finish called at 150000 (1ps)

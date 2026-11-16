@@ -1,0 +1,3 @@
+VCD info: dumpfile build/tb_pc.vcd opened for output.
+PASS: tb_pc checks=10
+/Users/viru/Documents/Codex/2026-11-16/new-chat-2/mca_project/tb/tb_pc.sv:41: $finish called at 72000 (1ps)
