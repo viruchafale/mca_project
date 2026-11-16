@@ -545,3 +545,130 @@ accesses are supported. No byte or half-word load is implemented in phase-2.
 
 These cases match the RTL condition:
 `address_valid = (address[31:10] == 22'd0) && (address[1:0] == 2'b00)`.
+
+
+---
+
+## SW effective-address examples and alignment verification
+
+*Kaustubh's addition — parallel SW examples showing the same address
+arithmetic and validity checks as the LW section, with emphasis on the
+S-format split immediate and the absence of a register write.*
+
+SW computes the same effective address formula as LW:
+`effective_address = rs1 + sign_extend(offset)`.
+The difference is that the data at `rs2` is written to that address
+instead of being read from it, and no register is updated.
+
+### SW case A — positive offset store
+
+```
+sw x2, 8(x3)
+Assumed: x3 = 0x200 (address base), x2 = 0xABCD1234 (data)
+```
+
+Effective address: `0x200 + 8 = 0x208`
+
+Validity:
+- `address[31:10] = 0` ✓
+- `address[1:0]   = 00` ✓
+- `address_valid  = 1`, word index = `0x208 >> 2 = 130`
+
+Action: `0xABCD1234` is written to RAM word 130 at the next rising clock
+edge (provided `mem_write = 1`, `reset = 0`, `address_valid = 1`).
+No register is modified. `x3` and `x2` retain their values.
+
+**S-format field construction:**
+
+imm = +8 → `0x008` → `imm[11:5] = 0000000`, `imm[4:0] = 01000`
+
+| Field | Bits | Binary |
+|---|---|---|
+| imm[11:5] | [31:25] | `0000000` |
+| rs2 (x2) | [24:20] | `00010` |
+| rs1 (x3) | [19:15] | `00011` |
+| funct3 | [14:12] | `010` |
+| imm[4:0] | [11:7] | `01000` |
+| opcode | [6:0] | `0100011` |
+
+Encoded word: `00218423`
+
+---
+
+### SW case B — negative offset store
+
+```
+sw x5, -4(x6)
+Assumed: x6 = 0x08C (address base), x5 = 0x0000FFFF (data)
+```
+
+Effective address: `0x08C + (−4) = 0x088`
+
+Validity:
+- `address[31:10] = 0` ✓
+- `address[1:0]   = 00` ✓
+- `address_valid  = 1`, word index = `0x088 >> 2 = 34`
+
+Action: `0x0000FFFF` stored at RAM word 34. The negative offset means the
+store lands below the base address — a valid and common access pattern.
+
+**Immediate split for −4:**
+
+−4 in 12-bit two's complement = `0xFFC` = `1111 1111 1100`
+- `imm[11:5] = 1111111`
+- `imm[4:0]  = 11100`
+
+Encoded word: `fe52c223`
+
+---
+
+### SW case C — store at first address
+
+```
+sw x7, 0(x8)
+Assumed: x8 = 0x000, x7 = 0xDEADBEEF
+```
+
+Effective address: `0x000 + 0 = 0x000`
+
+Validity: `address_valid = 1`, word index = 0 (first RAM word)
+
+Action: `0xDEADBEEF` written to word 0. Zero offset is valid; the RAM
+index 0 is accessible just like any other.
+
+Encoded word: `00742023`
+
+---
+
+### SW case D — store that is out of range (store silently ignored)
+
+```
+sw x10, 0(x11)
+Assumed: x11 = 0x1000
+```
+
+Effective address: `0x1000 + 0 = 0x1000`
+
+Validity: `address[31:10] = 0x4` ≠ 0 → **address_valid = 0**
+
+Action: The RAM does not write. The write-enable condition in the RTL is
+`!reset && mem_write && address_valid`; with `address_valid = 0`, the
+always block never fires. No data is stored and **no exception is raised
+by the standalone module**. The CPU (phase-4 onwards) must check
+`address_valid` to implement its fault policy.
+
+---
+
+### Comparison: LW vs SW on the same address
+
+Using `x20 = 0x100` as base and `offset = 0`:
+
+| Instruction | Effective address | address_valid | Register effect | Memory effect |
+|---|---|:---:|---|---|
+| `lw x1, 0(x20)` | 0x100 | 1 | x1 ← RAM[64] | none |
+| `sw x2, 0(x20)` | 0x100 | 1 | none | RAM[64] ← x2 |
+
+After both execute in sequence (store then load from same address):
+`x1` will contain the value that was in `x2` at store time. This
+round-trip confirms the RAM's read-after-write behaviour, which is
+verified by the phase-2 testbench.
