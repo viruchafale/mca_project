@@ -1,97 +1,68 @@
-# Phase progress
+# Phase Progress
 
-The opening table records the earlier phase-3 snapshot. The current phase-4
-status is recorded at the end of this document.
+This document maintains the official record of project progression across both the five Git development branches and the two academic evaluation phases. Historical milestone records are preserved to ensure full auditability.
 
-| Gate | Current status |
-|---|---|
-| Main baseline | fa7982481e52b5c60d7cccb1480b11c645efcf06 |
-| Phase-1 implementation | PC, ROM, fixture and harness published at 2fe6adb |
-| Phase-1 HDL verification | See reports/verification/phase-1.md and rerunnable build manifest |
-| Phase-1 publication | Published through 28f4abb, including corrected member mapping and architecture documentation |
-| Viraj architecture documentation | Overview, diagram, decisions and trace walkthrough complete with assistant support at his request |
-| Fresh verification review | 41 HDL checks and three runner rejection probes passed; real VCD values inspected |
-| Phase-1 progression | Viraj authorized starting phase-2 from published 28f4abb; personal interview preparation not asserted |
-| Phase-2 implementation | Register file, I/S/B immediate generator and checked data RAM published through 44cfd1d |
-| Phase-2 verification | 13,223 HDL checks, ten encoding checks and three runner rejection probes passed |
-| Phase-2 publication | Consolidated lead work published at 5645d01; Kaustubh's contribution published at 537996c |
-| Kaustubh contribution | 537996c accepted after example validation and a fresh regression; wording corrections recorded in a separate review note |
-| Phase-3 implementation | Arithmetic ALU/decoder/writeback/core implemented locally from 537996c |
-| Phase-3 verification | 145,292 HDL checks, ten encoding checks and three runner probes passed |
-| Phase-3 publication | Pending explicit push approval |
-| Pratyush contribution | Datapath/control task files prepared; substantive own-account contribution pending |
-| Phase-4 and phase-5 | Not started; phase-4 waits for Pratyush's accepted contribution |
+---
 
-Academic Phase I and Phase II are separate from these five development phases.
-Academic reports, video, the other four members' contributions and complete CPU
-execution remain pending. Viraj's existing implementation commits and requested
-documentation work are recorded under the lead's existing Git identity.
-The lead created this initial status record; Rudraksh takes over progress/artifact
-curation in phase-5. Do not present task assignments as completed contributions.
+## Historical Progression Snapshots
 
-## Completed architecture preparation
+### Main Baseline
+* **Commit:** `fa7982481e52b5c60d7cccb1480b11c645efcf06`
+* **Status:** Clean repository foundation; all active development conducted on feature/phase branches. `main` is strictly protected and never directly modified or merged into during development.
 
-1. Wrote the implemented-versus-planned processor overview.
-2. Drew and explained the real PC/ROM connections.
-3. Documented the reset, addressing, ROM and evidence decisions.
-4. Recorded a fresh simulation review and actual fetch waveform samples.
-5. Updated the project entry point, workflow and handoff status.
+### Phase-1 Implementation and Verification
+* **Implementation:** Program Counter (`pc.v`), Instruction ROM (`instruction_memory.v`), test harness, and simulation fixtures published at `2fe6adb`.
+* **Verification:** 41 HDL assertion checks and three runner rejection probes passed; fetch waveforms validated in [reports/verification/phase-1.md](../../reports/verification/phase-1.md).
+* **Documentation:** Architectural overview, design decisions, and trace walkthrough authored by Viraj with assistant support; published through `28f4abb`.
+* **Progression Gate:** Viraj authorized progression to Phase-2 from `28f4abb`.
 
-Each item is a substantive published documentation commit; no empty commits, author
-substitutions or rewritten history were used. The original simulation manifest
-remains preserved. The fresh review record points to the source commit at its run
-and includes unchanged RTL/test/program hashes.
+### Phase-2 Implementation and Verification
+* **Handoff:** Branched from `28f4abb`, preserving full Phase-1 history. Interface contracts documented in `docs/phase-2-interfaces.md`.
+* **Implementation:** 32-word Register File with hardwired `x0`, I/S/B Immediate Generator, and Data RAM published through `44cfd1d`.
+* **Verification:** 13,223 HDL assertion checks, 10 encoding checks, and 3 runner rejection probes passed; recorded in [reports/verification/phase-2.md](../../reports/verification/phase-2.md).
+* **Publication & Contribution:** Consolidated lead implementation published at `5645d01`. Kaustubh's instruction reference documentation accepted and published at `537996c` (with errata noted in `docs/reviews/kaustubh-phase-2-review.md`).
 
-## Phase-2 handoff
+### Phase-3 Implementation and Verification
+* **Handoff:** Branched from accepted `537996c`, preserving Kaustubh's documentation intact.
+* **Implementation:** Six-instruction arithmetic CPU core (`ADD`, `SUB`, `AND`, `OR`, `XOR`, `ADDI`), exact decoder, ALU, and diagnostic fault hold implemented under lead commit `cfe3b69`.
+* **Verification:** 145,292 HDL assertion checks, 10 encoding checks, and 3 runner probes passed; recorded in [reports/verification/phase-3.md](../../reports/verification/phase-3.md).
+* **Publication & Contribution:** Pratyush authored four datapath and control documentation commits through `aa089e5` (reviewed in `docs/reviews/pratyush-phase-3-review.md`).
 
-The phase-2 branch was created from 28f4abb and preserves the complete phase-1 history.
-The original PC/ROM RTL and phase-1 benches are unchanged. New module interfaces
-are documented in docs/phase-2-interfaces.md. Current implementation commits use
-the lead's existing Git identity, not Kaustubh's identity.
+### Phase-4 Implementation and Verification
+* **Handoff:** Branched from accepted `aa089e5`, preserving Pratyush's documentation intact.
+* **Implementation:** Full ten-instruction CPU integrating Data Memory (`LW`, `SW`) and Branch Unit (`BEQ`, `BNE`) implemented under lead commit `e63f8d2`.
+* **Verification:** 276,741 HDL checks passed across 16 test suites; 38-instruction independent architectural reference validated; recorded in [reports/verification/phase-4.md](../../reports/verification/phase-4.md).
+* **Publication & Contribution:** Bhargav authored four verification documentation commits through `c90f577` (reviewed in `docs/reviews/bhargav-phase-4-review.md`).
 
-This milestone verifies standalone modules and instruction encodings. It does not
-execute arithmetic, load/store or branch instructions in a CPU. The ALU, exact
-decoder and CPU integration remain later development work. The evidence record
-is reports/verification/phase-2.md; use its source identity and hashes when rerunning.
+---
 
-## Phase-3 progression
+## Phase-5 Progression: Generic Synthesis and Lead Handoff
 
-Phase-3 was created from Kaustubh's accepted 537996c commit. His three documentation
-files remain byte-for-byte intact; a separate review note records technical
-corrections. New arithmetic execution and fault evidence is recorded under
-reports/verification/phase-3.md. Member 3, Pratyush, owns datapath/control documents;
-the lead has not made commits under his identity. main, phase-1 and phase-2 are
-not modified by phase-3 development.
+* **Starting Baseline HEAD:** [`479d7d93dfeab1bfd1483504fee822cc826a1ff4`](https://github.com/viruchafale/mca_project/commit/479d7d93dfeab1bfd1483504fee822cc826a1ff4)
+* **Lead Deliverables:**
+  - Integrated generic Yosys synthesis script (`synth/generic.ys`) and runner targets (`make verify`).
+  - Strict structural checks (`check -assert`): 0 inferred latches, 0 residual memories/processes.
+  - Port-observable post-synthesis netlist simulation: 163 passing cycle-by-cycle checks over 38-instruction trace.
+  - Resolved synthesis ROM initialization defect in `rtl/instruction_memory.v` (separating synthesis `$readmemh` from simulation partial-padding loop).
+  - Authored baseline report drafts and academic checklist templates under lead identity.
+  - Published latest verification manifest ([reports/verification/phase-5-manifest.json](../../reports/verification/phase-5-manifest.json)) and synthesis observations ([reports/synthesis/phase-5.md](../../reports/synthesis/phase-5.md)).
 
-## Current progression: Phase-4
+---
 
-| Item | Current status |
-|---|---|
-| Phase-3 | Published lead cfe3b69 plus Pratyush's four accepted commits through aa089e5 |
-| Member preservation | All four Pratyush documents inherited byte-for-byte; review errata separate |
-| Phase-4 implementation | All ten instructions integrated locally, including memory and conditional branches |
-| Verification | 276,741 HDL checks passed; 38-instruction independent reference covers all ten and four branch outcomes |
-| Publication | Prepared as one implementation commit; push requires explicit approval |
-| Bhargav | Test plan, results and verification-checklist outlines prepared; own contribution pending |
-| Phase-5 | Not started; wait for Bhargav's accepted handoff |
+## Current Progression: Phase-5 Academic Deliverables (Rudraksh)
 
-Earlier sections are historical snapshots. Phase-4 is based on accepted aa089e5;
-main and previous phase tips are preserved. No member identity is impersonated.
+Rudraksh assumes project ownership for the final academic deliverables and submission artefacts under branch `phase-5`. All contributions are performed under Rudraksh's verified Git identity (`Rudraksh <rudraksh969977@gmail.com>`).
 
-## Current progression: Phase-5
+### Substantive Commits Progress Log
 
-Phase-5 starts at accepted c90f577 including all four Bhargav commits. Their
-original files are preserved except this progress record gains the current status.
-Main and prior phase branches remain unchanged by Phase-5 development.
+| Commit # | Commit Hash & Link | Commit Message | Scope and Substantive Improvements | Status |
+|---|---|---|---|---|
+| **Commit 1** | [`00cda66`](https://github.com/viruchafale/mca_project/commit/00cda66103256823551dc6422cd4fb4c2d6a044c) | `Review and improve the Phase I project report` | Reviewed and expanded `docs/project-report/phase-1-report.md`. Clarified retrospective status, detailed the 10-instruction scope vs out-of-scope features, documented datapath blocks, added prototype milestone table, verified member attributions, and linked primary references. | **Committed locally** |
+| **Commit 2** | [`817b017`](https://github.com/viruchafale/mca_project/commit/817b0174ae379faac5ce8bee05cb92a44a61c6d3) | `Refine the final report and verify project references` | Reviewed and expanded `final-report.md`, `final-report.tex`, `references.md`, and `README.md`. Mapped all numerical results to manifests/logs, distinguished HDL assertions from executed instructions, generic cells from FPGA LUTs, and CPI from Fmax. Documented ROM synthesis defect and netlist verification. Synchronized IEEEtran LaTeX source. | **Committed locally** |
+| **Commit 3** | *(Current)* | `Update project progress and submission checklists` | Audited `phase-progress.md`, `deliverables.md`, and `submission-index.md`. Established separate academic Phase I and II checklists with explicit statuses, member ownerships, clickable relative links, and commit URL evidence. | **In Progress** |
+| **Commit 4** | *(Planned)* | `Prepare the demo script and final project handoff` | Finalize realistic 5-minute video demonstration script (`demo-video.md`), comprehensive interview preparation notes with answer explanations for all five members (`interview-preparation.md`), and final submission index. | **Planned** |
 
-- Implemented generic synthesis, strict structural checks and port-only netlist trace validation.
-- Corrected ROM synthesis initialization masking while preserving simulation padding.
-- Prepared report/reference/demo/interview/submission drafts and both academic checklists.
-- Latest results: reports/verification/phase-5-manifest.json and reports/synthesis/phase-5.md.
-- Publication pending explicit approval; one lead implementation commit prepared.
-- Rudraksh's substantive personal report/artefact review and own-account commits pending.
-- Actual video, IEEE PDF export and required graphical screenshots pending.
-- FPGA mapping/timing/deployment unavailable; no hardware claim.
-
-Earlier sections are milestone snapshots. Read the current submission index and
-separate review notes before reusing historical wording in the final report.
+### Publication Gate
+- Local development is isolated to branch `phase-5`.
+- Pushing to remote (`origin/phase-5`) requires explicit user review and approval following the completion of all four local commits.
+- Absolute branch rule: No commits will be merged into `main` or pushed to other phase branches.
