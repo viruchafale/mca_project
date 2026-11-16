@@ -1,5 +1,8 @@
 # Processor overview
 
+Milestone note: this document describes the phase-1 fetch snapshot. Phase-2 adds
+standalone registers, immediates and data RAM; see the [current interfaces](../phase-2-interfaces.md).
+
 Phase-1 architecture documentation, assigned to Viraj. Prepared with assistant
 support at Viraj's request from the checked-in RTL and actual simulation results.
 This records the implementation; it does not claim a personal interview rehearsal

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reproduce phase-1 HDL checks. No third-party Python packages required."""
+"""Reproduce cumulative phase-2 HDL checks. No third-party Python packages required."""
 import argparse
 from datetime import datetime, timezone
 import hashlib
@@ -13,8 +13,12 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 BUILD = ROOT / "build"
-RTL = [ROOT / "rtl/pc.v", ROOT / "rtl/instruction_memory.v"]
-BENCHES = ["tb_pc", "tb_instruction_memory", "tb_fetch"]
+RTL = [ROOT / "rtl" / name for name in [
+    "pc.v", "instruction_memory.v", "register_file.v",
+    "immediate_generator.v", "data_memory.v",
+]]
+BENCHES = ["tb_pc", "tb_instruction_memory", "tb_fetch", "tb_register_file",
+           "tb_immediate_generator", "tb_data_memory"]
 
 
 def run(command, timeout=15):
@@ -44,7 +48,8 @@ def check_simulation(runtime, executable, top, wave=False, timeout=15):
 
 def validate_inputs():
     required = RTL + [ROOT / "tb" / (top + ".sv") for top in BENCHES]
-    required += [ROOT / "programs/fetch_smoke.hex"]
+    required += [ROOT / "programs/fetch_smoke.hex", ROOT / "programs/encoding-vectors.json",
+                 ROOT / "tools/check_encodings.py"]
     for path in required:
         if not path.is_file():
             raise RuntimeError("missing required input: " + str(path.relative_to(ROOT)))
@@ -123,6 +128,16 @@ def main():
             str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
             for p in sorted(candidates) if p.is_file()
         }
+        encoding_command = [sys.executable, str(ROOT / "tools/check_encodings.py")]
+        encoding_result = run(encoding_command)
+        encoding_log = encoding_result.stdout + encoding_result.stderr
+        (BUILD / "encoding_checks.log").write_text(encoding_log)
+        encoding_pass = re.fullmatch(r"PASS: instruction encodings checks=(\d+)\n?",
+                                     encoding_result.stdout)
+        if encoding_result.returncode or not encoding_pass or encoding_result.stderr:
+            raise RuntimeError("instruction encoding validation failed\n" + encoding_log)
+        report["encoding_checks"] = int(encoding_pass.group(1))
+        print(encoding_result.stdout.strip())
         report["lint"] = []
         for path in RTL:
             top = path.stem
@@ -152,7 +167,7 @@ def main():
                 report["harness_probes"] = harness_self_check(compiler, runtime)
         report["status"] = "pass"
         report["checks"] = sum(test["checks"] for test in report["tests"])
-        print("PASS: phase-1 checks=" + str(report["checks"]))
+        print("PASS: phase-2 checks=" + str(report["checks"]))
         return 0
     except (RuntimeError, subprocess.TimeoutExpired, OSError) as error:
         report["status"] = "fail"

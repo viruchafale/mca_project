@@ -1,0 +1,92 @@
+[
+  {
+    "hex": "002081b3",
+    "expected": {
+      "name": "ADD",
+      "rd": 3,
+      "rs1": 1,
+      "rs2": 2
+    }
+  },
+  {
+    "hex": "407302b3",
+    "expected": {
+      "name": "SUB",
+      "rd": 5,
+      "rs1": 6,
+      "rs2": 7
+    }
+  },
+  {
+    "hex": "00a4f433",
+    "expected": {
+      "name": "AND",
+      "rd": 8,
+      "rs1": 9,
+      "rs2": 10
+    }
+  },
+  {
+    "hex": "00d665b3",
+    "expected": {
+      "name": "OR",
+      "rd": 11,
+      "rs1": 12,
+      "rs2": 13
+    }
+  },
+  {
+    "hex": "0107c733",
+    "expected": {
+      "name": "XOR",
+      "rd": 14,
+      "rs1": 15,
+      "rs2": 16
+    }
+  },
+  {
+    "hex": "fff90893",
+    "expected": {
+      "name": "ADDI",
+      "rd": 17,
+      "rs1": 18,
+      "imm": -1
+    }
+  },
+  {
+    "hex": "ff0a2983",
+    "expected": {
+      "name": "LW",
+      "rd": 19,
+      "rs1": 20,
+      "imm": -16
+    }
+  },
+  {
+    "hex": "015b2623",
+    "expected": {
+      "name": "SW",
+      "rs1": 22,
+      "rs2": 21,
+      "imm": 12
+    }
+  },
+  {
+    "hex": "018b8463",
+    "expected": {
+      "name": "BEQ",
+      "rs1": 23,
+      "rs2": 24,
+      "imm": 8
+    }
+  },
+  {
+    "hex": "ffac9ee3",
+    "expected": {
+      "name": "BNE",
+      "rs1": 25,
+      "rs2": 26,
+      "imm": -4
+    }
+  }
+]

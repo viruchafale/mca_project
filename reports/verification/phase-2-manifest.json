@@ -1,0 +1,146 @@
+{
+  "milestone": "phase-2",
+  "status": "pass",
+  "verified_source_commit": "1ba38ace6db9f2ee0a1580e94af0a06214ee3b37",
+  "working_tree_dirty_at_run": false,
+  "started_utc": "2026-11-16T11:02:01.443184+00:00",
+  "compiler_version": "Icarus Verilog version 13.0 (stable) (v13_0)",
+  "command": "python3 tools/run_tests.py --wave --self-check",
+  "rtl_standard": "Verilog-2001",
+  "testbench_standard": "SystemVerilog-2012",
+  "hdl_checks": 13223,
+  "encoding_checks": 10,
+  "hdl_tests": [
+    {
+      "top": "tb_pc",
+      "checks": 10,
+      "status": "pass"
+    },
+    {
+      "top": "tb_instruction_memory",
+      "checks": 20,
+      "status": "pass"
+    },
+    {
+      "top": "tb_fetch",
+      "checks": 11,
+      "status": "pass"
+    },
+    {
+      "top": "tb_register_file",
+      "checks": 103,
+      "status": "pass"
+    },
+    {
+      "top": "tb_immediate_generator",
+      "checks": 12294,
+      "status": "pass"
+    },
+    {
+      "top": "tb_data_memory",
+      "checks": 785,
+      "status": "pass"
+    }
+  ],
+  "runner_rejection_probes": [
+    "fatal",
+    "no_summary",
+    "timeout"
+  ],
+  "additional_isolated_checks": [
+    "missing encoding input rejected with failed manifest",
+    "unsupported encoding rejected with failed manifest",
+    "invalid RTL rejected with nonzero exit"
+  ],
+  "input_sha256": {
+    "Makefile": "0d51cad9b9d884294ca9cdbc2e570acb79a7df00c9baa40b0fbca6d850fc036b",
+    "programs/encoding-vectors.json": "d0512b50cbc27a808d9685249c01a012789469fc3ccb2ed1226123dcd92c924c",
+    "programs/fetch_smoke.S": "e49f507498f315b3787b73ff219404957832637c0abba418e807fe720dd4ddf5",
+    "programs/fetch_smoke.hex": "01c58fd6f7c5ba74957df336618353d8c396390ac30b36ce9a4f5a0c9ce72c60",
+    "rtl/data_memory.v": "641af570e216ff04b5a9cb9db812fa39e6a9c9babf9a942d2bb13f450447d0ec",
+    "rtl/immediate_generator.v": "448f54458f75af403c73f7720e681318bcd747da27711a883082844d31d914cc",
+    "rtl/instruction_memory.v": "ea9b61a15a10f7d80825a73bf5449237caab9470c67267d65b1449ccce627790",
+    "rtl/pc.v": "4403fbe3c94f08dbd4533a3d629e3e5847fc6f30279c25e5450e89a22e2b23d3",
+    "rtl/register_file.v": "e895df546f1a16c812ce59a0990655c613ea35174dbd1b83410125bad1d10a2f",
+    "tb/tb_data_memory.sv": "f21b49c63669d09c94496906d2bb40310110d790d33b678d627efda41fd7f7c5",
+    "tb/tb_fetch.sv": "83dcfd09b4fbbc0bc0083bde60fe2ff5aa9b44d7f1e61b955e9798e39c8eca67",
+    "tb/tb_immediate_generator.sv": "51d80af3931822818d7e412b0c576e5913bdd3c18b10412b19a2c8f6e9ce4e69",
+    "tb/tb_instruction_memory.sv": "3fcc5a6689953dc8a20a36a6f5a0d23f838e22dd11dbe084456c8cb167323281",
+    "tb/tb_pc.sv": "1e9d88d76307717aa8914fab59af6c52d06e5a90aa9159afa3d62a1e9dcbc428",
+    "tb/tb_register_file.sv": "3febc479db0dafd5ed875557cf7584de2e99c653bfe221a036876f3b48393f65",
+    "tools/check_encodings.py": "12ad5921dad2f393a4b33ef57bc31c751ad698aadbb077a65300a037c4bd98fc",
+    "tools/run_tests.py": "29f22b50ba7b5a6c0eab87619eff0523826cdc98f5f1692cd1a2b80f930c0636"
+  },
+  "lint": [
+    {
+      "top": "pc",
+      "status": "pass",
+      "diagnostics": ""
+    },
+    {
+      "top": "instruction_memory",
+      "status": "pass",
+      "diagnostics": ""
+    },
+    {
+      "top": "register_file",
+      "status": "pass",
+      "diagnostics": ""
+    },
+    {
+      "top": "immediate_generator",
+      "status": "pass",
+      "diagnostics": ""
+    },
+    {
+      "top": "data_memory",
+      "status": "pass",
+      "diagnostics": ""
+    }
+  ],
+  "evidence": {
+    "tb_pc": {
+      "log": "phase-2-tb_pc.log",
+      "compile_diagnostics": "",
+      "generated_waveform": "build/tb_pc.vcd",
+      "waveform_sha256": "7d82f36fe27a918d96785b59e134df3d2365acd3bf4f38d2ebb12b7a1ab9564a",
+      "waveform_bytes": 1851
+    },
+    "tb_instruction_memory": {
+      "log": "phase-2-tb_instruction_memory.log",
+      "compile_diagnostics": "",
+      "generated_waveform": "build/tb_instruction_memory.vcd",
+      "waveform_sha256": "5a0c840cae853843ebd297ab3632f04edfa39570ff51eda4b4bee0abae39c3b1",
+      "waveform_bytes": 3342
+    },
+    "tb_fetch": {
+      "log": "phase-2-tb_fetch.log",
+      "compile_diagnostics": "",
+      "generated_waveform": "build/tb_fetch.vcd",
+      "waveform_sha256": "0f38373bfaffdf58460593a5aa7b5bfae1624a0df3adce86a12f4f54d1519ee0",
+      "waveform_bytes": 22127
+    },
+    "tb_register_file": {
+      "log": "phase-2-tb_register_file.log",
+      "compile_diagnostics": "",
+      "generated_waveform": "build/tb_register_file.vcd",
+      "waveform_sha256": "a2a1671885b2990086f45e3866e98de8da3f5fa6cb3adeae534432884b570e21",
+      "waveform_bytes": 16593
+    },
+    "tb_immediate_generator": {
+      "log": "phase-2-tb_immediate_generator.log",
+      "compile_diagnostics": "",
+      "generated_waveform": "build/tb_immediate_generator.vcd",
+      "waveform_sha256": "299ca4c4b5629c4018991d6776d4af20bdec11d5c100dc51da8bf485237ebb2b",
+      "waveform_bytes": 2891243
+    },
+    "tb_data_memory": {
+      "log": "phase-2-tb_data_memory.log",
+      "compile_diagnostics": "",
+      "generated_waveform": "build/tb_data_memory.vcd",
+      "waveform_sha256": "9474e2316a079bead4736c0e856245c7ff27f70d12e8697006342a818256f236",
+      "waveform_bytes": 133062
+    }
+  },
+  "encoding_log": "phase-2-encoding-checks.log"
+}

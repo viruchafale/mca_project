@@ -1,6 +1,6 @@
 # Lead's design contract
 
-Status: lead-prepared implementation specification and phase-1 behavior.
+Status: lead-prepared implementation specification and cumulative phase-2 behavior.
 Assigned architecture explanations remain separate documentation work.
 
 ## Implemented in phase-1
@@ -23,6 +23,25 @@ any ERROR or missing PASS summary even if that simulator stop has exit status ze
 The fetch bench wires PC+4 to the PC input. Its boundary test reaches 0x400;
 it exposes an invalid fetch. Sticky fault handling belongs to later CPU integration.
 
+## Added in phase-2
+
+The register file has two asynchronous reads, one synchronous enabled write and
+active-high synchronous reset. Reset clears every register, x0 reads zero and
+writes to x0 are ignored. Other registers need reset before their values are defined.
+
+The immediate generator selects I (00), S (01) or B (10), sign-extends the result,
+and returns immediate=0/format_valid=0 for selector 11. format_valid is not an
+instruction legality signal. B output already includes its implicit low zero.
+
+Data RAM uses the same byte-address checks as ROM: valid aligned words range
+from 0 through 0x3fc. Reads are asynchronous and enabled by mem_read; stores are
+clocked and require mem_write, a valid address and reset low. Reset preserves
+all RAM contents. Unwritten words are unspecified. Invalid reads return zero,
+invalid stores are ignored, and address_valid remains available for later CPU gating.
+
+These are standalone module implementations. See [interfaces](phase-2-interfaces.md).
+No instruction execution, hardware fault controller or processor top exists yet.
+
 ## Planned full processor
 
 - Single-cycle, non-pipelined, separate 1 KiB instruction and data memories.
@@ -37,5 +56,5 @@ it exposes an invalid fetch. Sticky fault handling belongs to later CPU integrat
   invalid memory addresses or a taken misaligned branch. No privileged trap claim.
 - Ideal no-stall CPI=1; clock-frequency claims require actual timing evidence.
 
-Later phases add and verify those components. Phase-1 tests establish only fetch-state
-and ROM behavior, not instruction semantics or complete RV32I compliance.
+Later phases integrate instruction execution and fault handling. Current tests
+establish component behavior and encoding fields, not complete RV32I compliance.

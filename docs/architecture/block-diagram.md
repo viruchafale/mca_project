@@ -1,5 +1,8 @@
 # Phase-1 block diagram
 
+This diagram remains the phase-1 fetch snapshot. The additional standalone
+phase-2 modules are documented in [current interfaces](../phase-2-interfaces.md).
+
 Assigned owner: Viraj. Prepared with assistant support from the real module
 connections in `tb/tb_fetch.sv`. The observer and PC+4 expression are testbench
 logic; this is not a complete synthesizable CPU top.

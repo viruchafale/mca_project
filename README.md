@@ -2,7 +2,7 @@
 
 College project by Viraj, Kaustubh, Pratyush, Rudraksh and Bhargav.
 
-**Current development milestone: phase-1 (PC and instruction ROM).**
+**Current development milestone: phase-2 (registers, immediates and data RAM).**
 The complete ten-instruction CPU is planned; this branch does not execute instructions yet.
 The `main` branch is intentionally left at its original commit.
 
@@ -13,6 +13,10 @@ The `main` branch is intentionally left at its original commit.
 - Valid ROM padding uses RV32I NOP (`00000013`); invalid fetches expose `address_valid=0`.
 - Verilog-2001 RTL, SystemVerilog self-checking benches, Python runner and Make targets.
 - Fetch fixture with assembly and a complete 256-word hexadecimal ROM image.
+- 32 x 32 register file with protected x0 and synchronous reset.
+- Combinational I/S/B immediate generator with explicit format selection.
+- Checked 1 KiB data RAM with asynchronous read, synchronous write and reset preservation.
+- Independent encoding checks for ten hand-calculated target instruction words.
 
 The integrated fetch test connects the PC to ROM and supplies PC+4. It does not decode, execute or take branches.
 
@@ -73,8 +77,20 @@ A phase closes after its implementation checks and the assigned member's real co
 Later branches start from the accepted previous branch, including member commits.
 No changes are merged or pushed to main.
 
+## Phase-2 handoff
+
+Phase-2 adds three standalone modules; [their interfaces](docs/phase-2-interfaces.md)
+define reset behavior, immediate formats and memory validity. The complete regression
+includes the original phase-1 tests. See [phase-2 evidence](reports/verification/phase-2.md).
+
+Kaustubh owns the instruction reference, encoding explanation and worked examples
+under docs/instruction-set/. The lead has now prepared assistant-supported reference
+documents and examples at Viraj's request. Kaustubh's independent examples, source/test
+review and substantive own-account commit remain pending. See CONTRIBUTING.md
+for exact files, commands and the next handoff gate.
+
 ## Current limits
 
-No register file, ALU, decoder, CPU top or data RAM is implemented on this branch.
+No ALU, instruction decoder, branch unit, writeback mux or CPU top is implemented yet.
 No ISA-execution, synthesis, hardware timing or FPGA claim is made.
 No prototype video or IEEE report is complete yet.

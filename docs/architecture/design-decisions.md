@@ -1,5 +1,8 @@
 # Architecture design decisions
 
+Milestone note: decisions below describe phase-1. The register, immediate and
+RAM additions are now documented in [phase-2 interfaces](../phase-2-interfaces.md).
+
 Assigned owner: Viraj. Prepared with assistant support by tracing the current RTL
 and benches. Decisions below distinguish existing behavior from later design work.
 
