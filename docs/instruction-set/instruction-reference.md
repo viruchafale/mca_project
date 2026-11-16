@@ -359,6 +359,68 @@ wired up yet; the ALU belongs to phase-3.
 
 ---
 
+### I/S/B-format instructions: register reads and writes
+
+| Instruction | Reads rs1? | Reads rs2? | Writes rd? | Writes memory? | Modifies PC? |
+|---|:---:|:---:|:---:|:---:|:---:|
+| ADDI rd, rs1, imm | ✓ | — | ✓ | — | — |
+| LW rd, offset(rs1) | ✓ | — | ✓ | — | — |
+| SW rs2, offset(rs1) | ✓ | ✓ | — | ✓ | — |
+| BEQ rs1, rs2, offset | ✓ | ✓ | — | — | ✓ (if taken) |
+| BNE rs1, rs2, offset | ✓ | ✓ | — | — | ✓ (if taken) |
+
+**Key observations for I-format (ADDI, LW):**
+
+- Only one register source (rs1) is read; there is no rs2 field. The
+  bits [24:20] that would be rs2 in R-format carry the upper half of the
+  12-bit immediate instead.
+- Both instructions write to rd: ADDI writes the arithmetic result,
+  LW writes the word loaded from memory.
+- The register-file interface is: `read_reg1 = rs1`, `reg_write = 1`,
+  `write_reg = rd`. The second read port (`read_reg2`) is unused.
+
+**Key observations for S-format (SW):**
+
+- Both rs1 (address base) and rs2 (data to store) are read.
+- There is **no rd field** and `reg_write = 0`. The register file receives
+  no write enable, so no register changes.
+- The 12-bit offset is reconstructed from split immediate bits [31:25]
+  and [11:7]. This reconstruction requires knowing the instruction is
+  S-format; the future decoder will select the correct immediate path.
+
+**Key observations for B-format (BEQ, BNE):**
+
+- Both rs1 and rs2 are read for the comparison; neither is written back.
+- There is **no rd field** and `reg_write = 0`.
+- The only architectural state change is to the PC (if the branch is taken).
+  PC update belongs to the future branch unit and PC-select mux.
+- The B-immediate is reconstructed from scattered bits by the immediate
+  generator. Phase-2 verifies this reconstruction exhaustively.
+
+---
+
+### Combined register-file usage: all ten instructions
+
+| Instruction | reg_write | write_reg | read_reg1 | read_reg2 |
+|---|:---:|---|---|---|
+| ADD | 1 | rd | rs1 | rs2 |
+| SUB | 1 | rd | rs1 | rs2 |
+| AND | 1 | rd | rs1 | rs2 |
+| OR  | 1 | rd | rs1 | rs2 |
+| XOR | 1 | rd | rs1 | rs2 |
+| ADDI | 1 | rd | rs1 | (not used) |
+| LW  | 1 | rd | rs1 | (not used) |
+| SW  | 0 | (none) | rs1 | rs2 |
+| BEQ | 0 | (none) | rs1 | rs2 |
+| BNE | 0 | (none) | rs1 | rs2 |
+
+The five instructions with `reg_write = 0` (SW, BEQ, BNE) never trigger a
+write to the register file. The register file's existing synchronous-write
+testbench confirms the enable logic; the control unit that drives `reg_write`
+correctly from the decoded opcode belongs to phase-3.
+
+---
+
 See [field encodings](instruction-encoding.md), [worked examples](execution-examples.md),
 [module interfaces](../phase-2-interfaces.md) and [measured component evidence](../../reports/verification/phase-2.md).
 The ISA source is listed in REFERENCES.md; component behavior is defined by the current RTL.
