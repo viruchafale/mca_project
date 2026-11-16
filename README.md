@@ -55,6 +55,20 @@ See [design contract](docs/design-contract.md), [phase progress](docs/project-pr
 [contribution workflow](CONTRIBUTING.md), [source provenance](REFERENCES.md) and
 [phase-1 evidence](reports/verification/phase-1.md).
 
+## Phase-1 architecture handoff
+
+Viraj's assigned architecture documents have been prepared with assistant support
+at his request, using the implemented RTL and a fresh passing simulation run:
+
+- [Processor overview](docs/architecture/processor-overview.md): present scope and planned instruction cycle.
+- [Block diagram](docs/architecture/block-diagram.md): actual PC/ROM connections and ports.
+- [Design decisions](docs/architecture/design-decisions.md): reset, addressing, padding and memory choices.
+- [Fetch walkthrough](docs/architecture/fetch-walkthrough.md): observed waveform samples and their limits.
+
+The content is complete locally and ready for review; personal interview
+preparation and final handoff acceptance are not asserted by these documents.
+See the [progress record](docs/project-progress/phase-progress.md) for publication status.
+
 A phase closes after its implementation checks and the assigned member's real contribution.
 Later branches start from the accepted previous branch, including member commits.
 No changes are merged or pushed to main.

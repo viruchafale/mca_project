@@ -60,6 +60,10 @@ frequency or FPGA result is claimed. Raw simulator waveforms exist; screenshots
 and captions for the team's verification documentation remain real member work.
 
 The original phase-1 implementation/evidence was published at 2fe6adb. Under the
-corrected member order, Viraj owns the three architecture documents, which remain
-assigned outlines. His lead implementation commits are genuine existing work;
-the architecture handoff still precedes phase-2. This mapping correction awaits publication.
+corrected member order, Viraj owns the architecture documents. At his request,
+those explanations and a [fetch walkthrough](../../docs/architecture/fetch-walkthrough.md)
+have now been completed with assistant support, followed by a recorded review of
+a fresh simulation. The [new review record](phase-1-architecture-review.json)
+preserves its own source identity; it does not replace this original run's manifest.
+The mapping/documentation commits await push approval and human handoff review
+before phase-2. The original published implementation remains unchanged.
