@@ -407,3 +407,141 @@ environment. They confirm that the hex words are correct encodings for the
 stated instructions according to the RISC-V field layout. Kaustubh has reviewed
 the field-by-field derivations in this document and in instruction-encoding.md;
 his confirmation of specific steps is requested below.
+
+
+---
+
+## LW effective-address worked examples with boundary cases
+
+*Kaustubh's addition — these examples explore the full range of LW address
+arithmetic including valid, boundary and invalid cases. They are worked ISA
+examples based on the specification and the data memory RTL, not measured
+CPU executions.*
+
+The data memory accepts byte addresses where `address[31:10] == 0` and
+`address[1:0] == 2'b00`. Valid byte addresses are therefore 0x000, 0x004,
+…, 0x3FC (256 words). All effective-address arithmetic is 32-bit.
+
+### LW case A — positive offset, mid-range address
+
+```
+lw x2, 20(x3)
+Assumed: x3 = 0x100
+```
+
+Effective address: `0x100 + 20 = 0x114`
+
+Validity check:
+- `address[31:10] = 0` ✓
+- `address[1:0]   = 00` ✓ (0x114 = 276 decimal, divisible by 4)
+- `address_valid  = 1`, word index = `0x114 >> 2 = 69`
+
+Result: `x2` receives the 32-bit word stored at RAM index 69. `x3` is
+unchanged. If word 69 was never written, its contents are unspecified.
+
+Encoded instruction: `01418103`
+
+| Field | Bits | Value |
+|---|---|---|
+| imm[11:0] | [31:20] | `000000010100` = +20 |
+| rs1 (x3) | [19:15] | `00011` = 3 |
+| funct3 | [14:12] | `010` |
+| rd (x2) | [11:7] | `00010` = 2 |
+| opcode | [6:0] | `0000011` |
+
+---
+
+### LW case B — zero offset (base address is the target)
+
+```
+lw x5, 0(x6)
+Assumed: x6 = 0x3FC   (last valid word in this RAM)
+```
+
+Effective address: `0x3FC + 0 = 0x3FC`
+
+Validity check:
+- `address[31:10] = 0` ✓
+- `address[1:0]   = 00` ✓ (0x3FC = 1020, divisible by 4)
+- `address_valid  = 1`, word index = `0x3FC >> 2 = 255` (last word)
+
+Result: `x5` receives the 32-bit word at the last RAM location. This is
+the highest valid address in this implementation; a base of 0x400 would
+already be invalid.
+
+Encoded instruction: `00030283`
+
+---
+
+### LW case C — negative offset (address below base)
+
+```
+lw x8, -4(x9)
+Assumed: x9 = 0x3FC
+```
+
+Effective address: `0x3FC + (−4) = 0x3F8`
+
+Validity check:
+- `address[31:10] = 0` ✓
+- `address[1:0]   = 00` ✓
+- `address_valid  = 1`, word index = 254
+
+Result: `x8` receives word at index 254. Negative offsets legitimately
+index words below the base address; this is a standard pattern for
+accessing fields of a structure by negative displacement from an
+end-of-structure pointer.
+
+Encoded instruction: `ffc4a403`
+
+---
+
+### LW case D — out-of-range address (address_valid = 0)
+
+```
+lw x11, 0(x12)
+Assumed: x12 = 0x400   (one word past the last valid address)
+```
+
+Effective address: `0x400 + 0 = 0x400`
+
+Validity check:
+- `address[31:10] = 0x1` ≠ 0 → **address_valid = 0**
+
+Result: The data memory drives `read_data = 0x00000000` (regardless of
+`mem_read`). `x11` would be written with 0 if the CPU proceeds; a correct
+implementation must observe `address_valid` and handle the fault. No RAM
+word is accessed. The phase-2 testbench explicitly verifies this return value.
+
+---
+
+### LW case E — unaligned address (address_valid = 0)
+
+```
+lw x14, 1(x15)
+Assumed: x15 = 0x100
+```
+
+Effective address: `0x100 + 1 = 0x101`
+
+Validity check:
+- `address[1:0] = 01` ≠ 00 → **address_valid = 0**
+
+Result: Unaligned word access; `read_data = 0`. Only aligned 32-bit
+accesses are supported. No byte or half-word load is implemented in phase-2.
+
+---
+
+### Summary — LW address_valid outcomes
+
+| Assumed x_base | Offset | Effective address | address_valid | Reason |
+|---|---|---|:---:|---|
+| 0x100 | +20 | 0x114 | 1 | In range, aligned |
+| 0x3FC | 0 | 0x3FC | 1 | Last valid word |
+| 0x3FC | −4 | 0x3F8 | 1 | In range, aligned |
+| 0x400 | 0 | 0x400 | 0 | Bit [10] set — out of range |
+| 0x100 | +1 | 0x101 | 0 | Bits [1:0] non-zero — unaligned |
+| 0x000 | 0 | 0x000 | 1 | First valid word (word index 0) |
+
+These cases match the RTL condition:
+`address_valid = (address[31:10] == 22'd0) && (address[1:0] == 2'b00)`.
