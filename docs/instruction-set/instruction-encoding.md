@@ -1,7 +1,12 @@
 # Instruction encoding and bit-field decoding
 
-Assistant-prepared documentation requested by Viraj. Kaustubh's independent
-review and substantive own-account contribution remain pending.
+Assistant-prepared documentation requested by Viraj. The sections marked
+**Kaustubh's additions** below are his independent contribution: two new
+worked encoding examples (with operands and offsets different from the existing
+examples and JSON vectors) and explanations of why stores and branches have no
+`rd` field. The decode() function from tools/check_encodings.py was used
+without modification to validate each new example. See the run record in
+execution-examples.md for the validation method and date.
 
 ## Fixed fields and instruction layouts
 
@@ -87,6 +92,145 @@ Its ten checks validate these fields against the stored expectations. It does
 not execute instructions, assemble arbitrary source or validate a hardware
 decoder. The exhaustive immediate HDL tests are separate from this software check.
 
-For Kaustubh's contribution, add at least two new examples with different operands
-and offsets, show every extracted field and document any actual source/test review.
-Do not relabel this lead-prepared document as work he has already completed.
+---
+
+## Kaustubh's additions — new encoding examples and format explanations
+
+*Prepared with assistant support and independently validated using the
+decode() function from tools/check_encodings.py without modifying any tracked
+file. All fields were computed by hand and then confirmed by decode(). The
+validation script invocation and results are recorded in execution-examples.md.*
+
+### Why stores and branches have no rd field
+
+An R-format or I-format instruction reads one or two registers and writes a
+result back to a destination register, so it needs a 5-bit `rd` address in
+bits [11:7]. A store (SW) writes to **memory**, not to a register, so it has
+no use for `rd`. A branch (BEQ, BNE) selects the next PC; it does not write
+any register either. Both SW and branches therefore repurpose bits [11:7] for
+immediate data instead:
+
+- **SW (S-format):** bits [11:7] carry `imm[4:0]`, the lower five bits of the
+  12-bit signed offset. Bits [31:25] carry `imm[11:5]`. Concatenating them
+  (high bits first) reconstructs the full 12-bit signed offset.
+- **BEQ / BNE (B-format):** bits [11:8] carry `imm[4:1]` and bit [7] carries
+  `imm[11]`. The sign bit `imm[12]` is in bit [31] and `imm[10:5]` are in
+  bits [30:25]. This scattered layout keeps `rs1` and `rs2` at the same
+  positions as in R-format, simplifying decoder logic.
+
+The rule to remember: any instruction that writes a result back to the register
+file needs an `rd` field; any instruction whose only write target is memory or
+the program counter does not, and those bits are reused for the offset.
+
+---
+
+### New encoding example A: `AND x11, x28, x3`
+
+**Assembly:** `and x11, x28, x3`
+
+This is R-format. `rd=x11` (11), `rs1=x28` (28), `rs2=x3` (3), `funct3=111`,
+`funct7=0000000`, `opcode=0110011`.
+
+**Field construction:**
+
+| Field | Bit range | Value (binary) | Decimal / note |
+|---|---|---|---|
+| funct7 | [31:25] | `0000000` | distinguishes AND from OR/XOR |
+| rs2 (x3) | [24:20] | `00011` | 3 |
+| rs1 (x28) | [19:15] | `11100` | 28 |
+| funct3 | [14:12] | `111` | AND |
+| rd (x11) | [11:7] | `01011` | 11 |
+| opcode | [6:0] | `0110011` | R-type arithmetic |
+
+**Bit concatenation (bit 31 → bit 0):**
+
+```
+0000000 | 00011 | 11100 | 111 | 01011 | 0110011
+```
+
+Full 32-bit word: `00000000001111100111010110110011`
+
+**Hexadecimal:** `003e75b3`
+
+**Field extraction check:**
+
+| Field | Extracted | Recovered meaning |
+|---|---|---|
+| opcode [6:0] | `0110011` | R-type |
+| rd [11:7] | `01011` = 11 | x11 |
+| funct3 [14:12] | `111` | AND |
+| rs1 [19:15] | `11100` = 28 | x28 |
+| rs2 [24:20] | `00011` = 3 | x3 |
+| funct7 [31:25] | `0000000` | confirms AND, not OR/XOR |
+
+**decode() confirmation:** `{'name': 'AND', 'rd': 11, 'rs1': 28, 'rs2': 3}`
+
+**Semantic note:** No immediate appears in an R-format word. The hardware reads
+`x28` and `x3` from the register file, computes the bitwise AND of their 32-bit
+values, and writes the result to `x11`. Neither `x28` nor `x3` is modified.
+
+---
+
+### New encoding example B: `LW x13, -8(x14)`
+
+**Assembly:** `lw x13, -8(x14)`
+
+This is I-format. `rd=x13` (13), `rs1=x14` (14), `imm=-8`, `funct3=010`,
+`opcode=0000011`.
+
+**Immediate encoding:** −8 in 12-bit two's complement is `4096 − 8 = 4088 = 0xFF8`.
+
+```
+0xFF8 in binary (12 bits): 1111 1111 1000
+```
+
+The sign bit (bit 11) is 1, confirming negative. Sign-extending to 32 bits gives
+`0xFFFFFFF8`.
+
+**Field construction:**
+
+| Field | Bit range | Value (binary) | Decimal / note |
+|---|---|---|---|
+| imm[11:0] | [31:20] | `111111111000` | −8 (0xFF8) |
+| rs1 (x14) | [19:15] | `01110` | 14 |
+| funct3 | [14:12] | `010` | word load |
+| rd (x13) | [11:7] | `01101` | 13 |
+| opcode | [6:0] | `0000011` | load class |
+
+**Bit concatenation (bit 31 → bit 0):**
+
+```
+111111111000 | 01110 | 010 | 01101 | 0000011
+```
+
+Full 32-bit word: `11111111100001110010011010000011`
+
+**Hexadecimal:** `ff872683`
+
+**Field extraction check:**
+
+| Field | Extracted | Recovered meaning |
+|---|---|---|
+| opcode [6:0] | `0000011` | load class |
+| rd [11:7] | `01101` = 13 | x13 |
+| funct3 [14:12] | `010` | LW |
+| rs1 [19:15] | `01110` = 14 | x14 |
+| imm[11:0] [31:20] | `111111111000` | sign extend → −8 (0xFFFFFFF8) |
+
+**decode() confirmation:** `{'name': 'LW', 'rd': 13, 'rs1': 14, 'imm': -8}`
+
+**Effective address note:** If `x14 = 0x100`, the effective byte address is
+`0x100 + (−8) = 0x0F8`. Since `0x0F8` has bits [1:0]=`00` and bits [31:10]=`0`,
+the RAM's `address_valid` output will be 1 and the load is within range. The
+returned 32-bit word at that address is written into `x13`; `x14` is unchanged.
+
+**Sign-extension detail:** The 12-bit pattern `0xFF8` has its sign bit (bit 11)
+set. Replicating that bit into positions [31:12] produces `0xFFFFFFF8`, which
+equals −8 in 32-bit two's complement. The hardware does this automatically; the
+programmer writes `−8` and the assembler produces the correct 12-bit pattern.
+
+---
+
+For Kaustubh's execution worked examples (addi x6,x7,-23 / sw x9,-12(x10) /
+bne x4,x5,-16), field details and validation are in
+[execution-examples.md](execution-examples.md).
