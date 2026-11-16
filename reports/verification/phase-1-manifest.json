@@ -1,0 +1,69 @@
+{
+  "milestone": "phase-1",
+  "status": "pass",
+  "verified_source_commit": "50ef08030dbde3ed9210f4514b8b715f19fac360",
+  "working_tree_dirty_at_run": false,
+  "started_utc": "2026-11-16T10:13:21.223015+00:00",
+  "compiler_version": "Icarus Verilog version 13.0 (stable) (v13_0)",
+  "command": "python3 tools/run_tests.py --wave --self-check",
+  "rtl_standard": "Verilog-2001",
+  "testbench_standard": "SystemVerilog-2012",
+  "hdl_tests": [
+    {
+      "top": "tb_pc",
+      "checks": 10,
+      "status": "pass"
+    },
+    {
+      "top": "tb_instruction_memory",
+      "checks": 20,
+      "status": "pass"
+    },
+    {
+      "top": "tb_fetch",
+      "checks": 11,
+      "status": "pass"
+    }
+  ],
+  "hdl_checks": 41,
+  "runner_rejection_probes": [
+    "fatal",
+    "no_summary",
+    "timeout"
+  ],
+  "additional_isolated_runner_checks": [
+    "missing input rejected with exit 1",
+    "invalid RTL rejected with exit 1"
+  ],
+  "input_sha256": {
+    "Makefile": "0d51cad9b9d884294ca9cdbc2e570acb79a7df00c9baa40b0fbca6d850fc036b",
+    "programs/fetch_smoke.S": "e49f507498f315b3787b73ff219404957832637c0abba418e807fe720dd4ddf5",
+    "programs/fetch_smoke.hex": "01c58fd6f7c5ba74957df336618353d8c396390ac30b36ce9a4f5a0c9ce72c60",
+    "rtl/instruction_memory.v": "ea9b61a15a10f7d80825a73bf5449237caab9470c67267d65b1449ccce627790",
+    "rtl/pc.v": "4403fbe3c94f08dbd4533a3d629e3e5847fc6f30279c25e5450e89a22e2b23d3",
+    "tb/tb_fetch.sv": "83dcfd09b4fbbc0bc0083bde60fe2ff5aa9b44d7f1e61b955e9798e39c8eca67",
+    "tb/tb_instruction_memory.sv": "3fcc5a6689953dc8a20a36a6f5a0d23f838e22dd11dbe084456c8cb167323281",
+    "tb/tb_pc.sv": "1e9d88d76307717aa8914fab59af6c52d06e5a90aa9159afa3d62a1e9dcbc428",
+    "tools/run_tests.py": "16bbccd070d465083d0a25e9888e043b3aacdd9e753686a21f26957e0b6f6967"
+  },
+  "evidence": {
+    "tb_pc": {
+      "log": "phase-1-tb_pc.log",
+      "generated_waveform": "build/tb_pc.vcd",
+      "waveform_sha256": "a21a56f671d7c7fca95c0a07f97b00140c9fb184de3b3ad13132e7608b5b5a03",
+      "waveform_bytes": 1851
+    },
+    "tb_instruction_memory": {
+      "log": "phase-1-tb_instruction_memory.log",
+      "generated_waveform": "build/tb_instruction_memory.vcd",
+      "waveform_sha256": "5bf8139930e179a6d8c73bdd9575b4c5c4d37e6da28ba49d20360529ba251a8c",
+      "waveform_bytes": 3342
+    },
+    "tb_fetch": {
+      "log": "phase-1-tb_fetch.log",
+      "generated_waveform": "build/tb_fetch.vcd",
+      "waveform_sha256": "c0533ddc4f990cdafe1e7f5203e8ec6c04f15ab0ed9028878bca7b91fe699600",
+      "waveform_bytes": 22127
+    }
+  }
+}

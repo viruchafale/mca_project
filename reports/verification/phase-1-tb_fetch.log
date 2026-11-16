@@ -1,0 +1,3 @@
+VCD info: dumpfile build/tb_fetch.vcd opened for output.
+PASS: tb_fetch checks=11
+/Users/viru/Documents/Codex/2026-11-16/new-chat-2/mca_project/tb/tb_fetch.sv:48: $finish called at 2670000 (1ps)
