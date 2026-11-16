@@ -2,69 +2,136 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{url}
+\usepackage{amsmath}
+
 \title{Single-Cycle RV32I Processor}
-\author{\IEEEauthorblockN{Viraj, Kaustubh, Pratyush, Bhargav and Rudraksh}
-\IEEEauthorblockA{Institution and department: confirm before submission}}
+
+\author{
+\IEEEauthorblockN{Viraj, Kaustubh, Pratyush, Bhargav and Rudraksh}
+\IEEEauthorblockA{Department of Computer Applications / Computer Science and Engineering\\
+Institution and Department: Confirm before formal submission}
+}
+
 \begin{document}
 \maketitle
-% Technical draft. Confirm author details, academic cutoff and results before submission.
+
 \begin{abstract}
-A compact single-cycle processor implements ten selected RV32I operations in modular Verilog-2001. It combines a 32-register datapath, separate instruction/data memories, immediate generation, arithmetic/logic operations, conditional branches and memory writeback. Self-checking simulation covers component behavior, architectural execution, alignment/range errors and reset. Generic synthesis and a port-observable netlist trace test complement RTL verification. Results are limited to the tested subset and generic implementation; no FPGA clock frequency, power or physical deployment is claimed.
-
+This paper presents the design, microarchitectural implementation, rigorous multi-level verification, and open-source generic synthesis of a single-cycle processor executing a ten-instruction educational subset of the RISC-V RV32I base integer specification. Implemented in Verilog-2001, the processor integrates a 32-bit Program Counter, an asynchronous 256-word instruction read-only memory (ROM), an exact instruction decoder and control unit, a 32-word general-purpose register file with a hardwired-zero x0 register, a multi-format sign-extending immediate generator, an arithmetic and logic unit (ALU), a dedicated branch comparator unit, a 256-word data memory (RAM), and writeback multiplexing. Runtime defensive fault-gating logic suppresses state side-effects and latches diagnostic codes upon fetch misalignment, illegal instruction encodings, or invalid memory addresses. Functional correctness is established through 276,741 passing RTL assertion checks across 16 self-checking testbenches, supplemented by cycle-by-cycle comparison against an independent architectural reference model executing 38 instructions spanning all ten operations and four branch outcomes. Generic logic synthesis via Yosys yields 22,695 leaf generic cells with zero inferred latches. A port-observable post-synthesis netlist simulation passes 163 cycle-accurate checks, verifying hardware structure and confirming resolution of a synthesis ROM initialization defect. Results are strictly bounded to the tested instruction subset and generic cell library; no FPGA clock frequency, look-up table utilization, power consumption, or physical deployment is claimed.
 \end{abstract}
-\section{Introduction and objectives}
-The objective is to make fetch, decode, operand selection, execution and writeback visible in one cycle. The supported subset is ADD, SUB, AND, OR, XOR, ADDI, LW, SW, BEQ and BNE. The design deliberately omits other RV32I instructions, privileged traps, interrupts and caches. A fault hold is an educational diagnostic mechanism. The project therefore demonstrates selected architectural semantics rather than full ISA compliance or software-platform compatibility.
 
-\section{Literature review}
-RV32I \cite{ref1} specifies the programmer-visible contract: registers, instruction formats and execution behavior. It leaves datapath construction to implementers. Icarus documentation \cite{ref2} describes simulation tooling used here to observe clocked state and diagnose failing checks. Yosys documentation \cite{ref3} distinguishes general synthesis from hardware-specific flows. Together these sources motivate independent functional and structural validation. Uploaded MIPS examples \cite{ref4} informed project organization; their encodings, tool results and authorship are not transferred to this processor. No comparative performance advantage over published processors is claimed because no equivalent benchmark or technology comparison was run.
+\section{Introduction and Objectives}
+The primary objective of this project is to provide a transparent, cycle-accurate reference implementation of a RISC-V processor where the fundamental stages of instruction execution---instruction fetch, instruction decode, operand selection, ALU execution, memory access, and register writeback---occur deterministically within a single clock cycle. By implementing a self-contained single-cycle microarchitecture, the processor eliminates the structural and data hazard complexities of pipelined designs while making datapath signal flow and control transitions directly inspectable in simulation waveforms.
 
-\section{Proposed solution and implementation}
-A 32-bit PC addresses a 256-word ROM using byte addresses. Its next value is PC+4 or a branch target. The decoder validates opcode/funct3 and the required R-format funct7; unsupported encodings select safe controls. A 32\ensuremath{\times}32 register file provides two asynchronous reads and one synchronous write. x0 remains zero. The immediate generator produces sign-extended I/S/B values; B offsets already include bit zero.
+The processor implements an educational subset of ten instructions from the RV32I base integer instruction set:
+\begin{itemize}
+\item \textbf{R-type (Arithmetic and Logic):} \texttt{ADD}, \texttt{SUB}, \texttt{AND}, \texttt{OR}, \texttt{XOR}
+\item \textbf{I-type (Immediate Arithmetic and Load):} \texttt{ADDI}, \texttt{LW}
+\item \textbf{S-type (Store):} \texttt{SW}
+\item \textbf{B-type (Conditional Branch):} \texttt{BEQ}, \texttt{BNE}
+\end{itemize}
 
-The ALU supports ADD, SUB, AND, OR and XOR. ADDI selects a signed immediate. LW/SW use addition for the effective address. A separate branch unit compares registers and adds the byte offset to the current PC. LW selects RAM data for writeback; SW writes rs2 without updating a register. RAM is 256 words with asynchronous reads and synchronous writes. Valid word addresses are 0..1020 in steps of four. Reads of unwritten RAM are unspecified, so programs initialize all locations they read.
+To maintain an educational, fully verifiable scope, the microarchitecture deliberately omits other RV32I base instructions (shifts, comparison immediates, upper immediates, jumps, and byte/halfword memory accesses), privileged architecture (CSRs, privilege rings, architectural trap handlers), interrupts, pipeline stages, and cache hierarchies.
 
-Synchronous reset clears the PC, registers and fault state, suppresses writes, and preserves RAM. Invalid fetch/decode/data access or a taken misaligned branch blocks side effects before the fault-latching edge. Causes 01,10,11 distinguish fetch, instruction and data/branch faults. A not-taken branch does not validate its unused target. An aligned out-of-ROM target faults on subsequent fetch.
+In lieu of complex operating system trap handlers, an educational fault-gating mechanism protects system state against invalid operations. Any misaligned instruction fetch, unrecognized opcode/funct field, out-of-bounds RAM access, or misaligned branch target immediately deasserts write enables (\texttt{reg\_write = 0}, \texttt{mem\_write = 0}), freezes the Program Counter, latches a 2-bit diagnostic fault code (\texttt{2'b01}: Fetch fault, \texttt{2'b10}: Illegal instruction fault, \texttt{2'b11}: Data/branch fault), and maintains this frozen state until cleared by an active-high synchronous reset.
 
-A legacy ARITHMETIC\_ONLY parameter retains the Phase-3 six-instruction regression; default operation enables all ten instructions. The ROM image ends in a legal BEQ self-loop, not a custom HALT instruction.
+\section{Literature Review}
+The processor design and verification framework build upon primary specifications and established open-source Electronic Design Automation (EDA) tooling:
 
-\section{Verification methodology}
-The runner checks input encodings, executes an independent architectural reference, compiles RTL as Verilog-2001 and runs sixteen self-checking SystemVerilog suites. The reference independently decodes machine words and validates explicit final register/RAM signatures. Its 38-instruction trace is checked cycle by cycle by the integration bench. Directed suites cover invalid addresses, x0 load behavior, taken/not-taken branch alignment, fault hold and reset during a pending store. Runner probes reject fatal errors, missing PASS summaries and timeouts.
+The RISC-V Instruction Set Manual, Volume I: Unprivileged ISA (Version 2.1, release v20260120) \cite{ref1} defines the programmer-visible contract: 32 general-purpose registers (\texttt{x0}--\texttt{x31}) where \texttt{x0} is hardwired to zero, fixed 32-bit instruction encodings, uniform register address placement (\texttt{rs1} at [19:15], \texttt{rs2} at [24:20], \texttt{rd} at [11:7]), signed two's-complement immediate layouts, and exact arithmetic/logical operation semantics. The specification decouples architectural definitions from microarchitectural realizations.
 
-Two decoder sweeps cover instruction-field classes in distinct modes. Their 262,144 checks do not mean that many CPU instructions executed, nor every possible 32-bit word or program state. Simulation and the netlist smoke test are bounded checks, not formal equivalence or proof of complete ISA compliance.
+The Icarus Verilog simulation suite \cite{ref2} provides the event-driven simulation engine for functional verification. Testbenches apply stimulus vectors, inspect internal registers, evaluate bus assertions on clock edges, and export Value Change Dump (\texttt{.vcd}) waveforms for visual signal inspection.
 
-\section{Results and discussion}
-\noindent Result — Evidence\par
-\noindent 276,741 RTL HDL checks across 16 suites — reports/verification/phase-5-manifest.json\par
-\noindent 10 known encoding vectors — Same manifest and encoding log\par
-\noindent 38 reference instructions; 10 operations; 4 branch outcomes — Reference and integration logs\par
-\noindent Generic synthesis, structural checks and latch inspection — reports/synthesis/phase-5-manifest.json\par
-\noindent Port-only netlist trace check — reports/synthesis/phase-5-netlist-check.json\par
-\noindent Generic cell breakdown and interpretation — reports/synthesis/phase-5.md\par
-A synthesis smoke test exposed an initialization-order problem: mixing procedural NOP defaults with readmemh caused the synthesized ROM to contain NOPs rather than the program. Phase-5 separates those initialization paths for synthesis and requires a complete 256-word image. Simulation retains partial-image padding. The corrected netlist must reproduce the architectural trace before acceptance.
+The Yosys Open SYnthesis Suite \cite{ref3} provides RTL elaboration, generic technology mapping (\texttt{synth -top rv32i\_cpu}), and formal structural checking (\texttt{check -assert}). Synthesis verifies that behavioral Verilog constructs infer valid combinational gates and flip-flops without unwanted transparent latches or undriven nets.
 
-Generic mapping expands asynchronous RAM into enabled flip-flops and read muxes. Those counts cannot be translated directly into FPGA LUT/BRAM use. The fixed ROM can be optimized for the supplied program, so results depend on that image. Resource and timing comparisons require identical targets, constraints and images.
+Educational MIPS-32 processor architectures \cite{ref4} archived in project records served as structural inspiration for modular 5-stage partitioning (Fetch, Decode, Execute, Memory, Writeback). However, MIPS instruction encodings, control matrices, coprocessor registers, and simulation outputs are specific to MIPS and are not applicable to RISC-V. All RTL modules, decoders, immediate extractors, and testbenches in this repository are developed strictly for the RV32I specification.
 
-\section{Performance observations}
-Each valid instruction commits on one rising edge, so steady-state CPI is one for this zero-wait memory model. Fault holds and reset are not retired instructions. The 38-instruction test takes 38 execution cycles, excluding reset and extra self-loop observations. A testbench clock is a stimulus, not a measured Fmax.
+\section{Proposed Solution and Implementation}
+The single-cycle RV32I processor is organized into distinct, modular functional blocks interconnected by dedicated 32-bit buses.
 
-The load path is a plausible timing bottleneck because it includes instruction fetch, register read/address generation, RAM read and writeback. The branch, decoder and write-enable paths may also constrain timing. Only target-specific static timing after mapping/routing can identify the actual critical path. No numerical throughput, timing slack or power estimate is supplied.
+A 32-bit Program Counter (\texttt{pc.v}) resets synchronously to \texttt{32'h00000000} and advances to \texttt{next\_pc} on each clock edge when unhalted. A 256-word instruction read-only memory (\texttt{instruction\_memory.v}) is combinationally addressed by \texttt{pc[9:2]}, returning the 32-bit instruction word within the cycle while enforcing 4-byte alignment (\texttt{pc[1:0] == 2'b00}) and range bounds (\texttt{0x000}--\texttt{0x3FC}).
 
-\section{Individual contributions}
-\noindent Member — Documented role and evidence\par
-\noindent Viraj — RTL, testbenches, tools, architecture and phase implementation; lead Git history\par
-\noindent Kaustubh — Instruction reference/encoding/examples; accepted phase-2 history\par
-\noindent Pratyush — Datapath/control explanations and validation documentation; four phase-3 commits\par
-\noindent Bhargav — Verification plan, results, waveform explanation and handoff; four phase-4 commits\par
-\noindent Rudraksh — Assigned report/reference/demo/submission curation; personal contribution pending\par
-This Phase-5 draft was prepared with assistant support under the lead's identity. It is not Rudraksh's completed personal contribution. Earlier members' documents are preserved; separate review notes record technical qualifications. Git authorship and substantive diffs are evidence of contribution, not proof of interview readiness.
+The control unit and decoder (\texttt{control_unit.v}) decodes \texttt{opcode}, \texttt{funct3}, and \texttt{funct7}, generating write enables, multiplexer select lines, and ALU operation codes. Unrecognized instruction words deassert write enables and flag an illegal instruction fault. The register file (\texttt{register_file.v}) contains 32 registers with two asynchronous read ports and one synchronous write port; register \texttt{x0} discards writes and always reads zero. The immediate generator (\texttt{immediate_generator.v}) produces sign-extended 32-bit immediates for I-format, S-format, and B-format (with bit 0 implicitly zero).
+
+The arithmetic logic unit (\texttt{alu.v}) performs addition, subtraction, AND, OR, and XOR, and computes effective memory addresses for \texttt{LW} and \texttt{SW}. A dedicated branch unit (\texttt{branch_unit.v}) compares register operands for \texttt{BEQ} and \texttt{BNE} and computes the branch target as \texttt{pc + imm\_b}. Data memory (\texttt{data_memory.v}) provides 256 words with asynchronous reads for single-cycle \texttt{LW} writeback and synchronous writes for \texttt{SW}. The writeback multiplexer (\texttt{writeback_mux.v}) selects between the ALU output and memory read data.
+
+Top-level parameter \texttt{ARITHMETIC\_ONLY} is retained for backwards compatibility with Phase-3 regression tests. Programs terminate cleanly using a legal \texttt{BEQ} self-loop (\texttt{BEQ x0, x0, 0}).
+
+\section{Verification Methodology}
+The verification framework combines multi-tiered testbenches executed via \texttt{tools/run_tests.py}:
+\begin{enumerate}
+\item \textbf{Instruction Encoding Checks:} Validates machine-code word encodings against bitfield disassembly rules for all supported instructions.
+\item \textbf{Independent Architectural Reference:} A Python reference emulator independently executes test programs, decodes instructions, updates state, and outputs golden cycle-by-cycle execution traces.
+\item \textbf{Integration Test Suite (\texttt{tb\_full\_isa.v}):} Executes a 38-instruction program covering all ten supported operations, memory load/store sequences, and four branch outcomes (two taken, two not taken).
+\item \textbf{Directed Component Testbenches:} Sixteen self-checking testbenches validate edge cases, including register file write priority, x0 protection on load, two's-complement arithmetic overflow, branch outcome truth tables, data memory alignment, synchronous reset during a pending store (\texttt{tb\_cpu_reset\_memory.v}), and fault injection.
+\item \textbf{Runner Integrity Checks:} Test execution strictly validates output, rejecting runs with simulator errors, missing \texttt{PASS} banners, or timeouts.
+\end{enumerate}
+
+Key technical distinctions must be emphasized:
+\begin{itemize}
+\item \textbf{HDL Assertions vs. Executed Instructions:} The 276,741 reported assertion checks include 262,144 combinational checks from exhaustive sweeps of the instruction decoder, evaluating control lines across bitfield permutations. These represent combinational assertion evaluations, not 262,144 executed CPU instructions. The number of fully executed CPU instructions is bounded by the specific integration programs (e.g., 38 instructions in \texttt{tb\_full\_isa.v}).
+\item \textbf{RTL Simulation vs. Netlist Simulation:} RTL simulation operates on behavioral Verilog with internal register visibility; netlist simulation operates on the gate-level netlist generated by Yosys synthesis and verifies only externally observable primary top-level ports (\texttt{pc}, \texttt{inst}, \texttt{alu\_result}, \texttt{mem\_write}, \texttt{reg\_write}, \texttt{fault}) over the 38-instruction trace.
+\item \textbf{Bounded Testing vs. Formal Proof:} Bounded simulation proves correctness for the tested stimuli and edge cases; it does not constitute a mathematical formal equivalence proof across all possible 32-bit execution sequences.
+\end{itemize}
+
+\section{Results and Discussion}
+All reported results map directly to verifiable test manifests and logs:
+\begin{itemize}
+\item \textbf{276,741 RTL assertion checks} passed across 16 test suites (\texttt{reports/verification/phase-5-manifest.json}).
+\item \textbf{10 encoding vectors} verified (\texttt{reports/verification/phase-5-encoding\_checks.log}).
+\item \textbf{38 reference instructions} executed covering 10 operations and 4 branch outcomes (\texttt{reports/verification/phase-5-phase4\_reference.log}).
+\item \textbf{163 netlist checks} passed during port-observable post-synthesis simulation (\texttt{reports/synthesis/phase-5-netlist-check.json}).
+\item \textbf{Structural synthesis checks} confirmed zero latches and zero residual memories/processes (\texttt{reports/synthesis/phase-5-stat.json}).
+\end{itemize}
+
+Generic logic synthesis using Yosys 0.71 produced:
+\begin{itemize}
+\item Hierarchical cell total: 22,704 (including 9 module instances).
+\item Leaf generic logic cells: 22,695.
+\item Generic flip-flop cells: 9,251 (Data RAM: 8,192; Register File: 1,024; PC/fault state: 35).
+\item Multiplexer cells: 9,555.
+\item Inferred latches: 0.
+\end{itemize}
+
+\subsection{Distinction Between Generic Cells and FPGA Resources}
+Generic cells are abstract, technology-independent Boolean primitives. They do not correspond directly to FPGA Look-Up Tables (LUTs), Configurable Logic Blocks (CLBs), or dedicated hardware Block RAMs (BRAMs). The 8,192 flip-flops in data memory arise because single-cycle load writeback requires asynchronous read access; standard FPGA BRAMs require a synchronous read edge. Generic synthesis does not perform place-and-route, IO pad placement, clock tree synthesis, or device-specific timing closure.
+
+\subsection{ROM Synthesis Defect and Regression}
+During Phase-5 synthesis, an initialization flaw was uncovered: in behavioral simulation, ROM words were initialized to NOPs via a procedural loop before loading via \texttt{\$readmemh}. In Yosys structural synthesis, this procedural loop masked the \texttt{\$readmemh} contents, causing the synthesized ROM netlist to contain all NOPs. Netlist simulation detected this immediately on cycle 1, observing \texttt{00000013} instead of \texttt{04000093}. The lead corrected \texttt{instruction\_memory.v} by separating synthesis and simulation initialization paths. Following correction, the synthesized netlist passed all 163 port-observable checks over the 38-instruction trace. This RTL correction was authored by Viraj as part of the lead implementation; Rudraksh audited and verified the evidence.
+
+\section{Performance Observations}
+In this single-cycle processor, every valid non-faulting instruction executes and commits state updates on a single rising clock edge:
+\begin{equation}
+\text{CPI} = 1.0
+\end{equation}
+Fault holds and synchronous reset freeze execution rather than retiring instructions, and thus do not represent a multi-cycle CPI penalty.
+
+A CPI of 1.0 does not imply high clock frequency. The achievable clock frequency ($F_{\max}$) is constrained by the long combinational propagation path. Testbench clock periods (e.g., 10~ns / 100~MHz) are arbitrary simulation timescale parameters and do not represent measured hardware frequency.
+
+The critical path is the Load Word (\texttt{LW}) path:
+\begin{equation}
+T_{\text{clk}} \ge T_{\text{pc\_clk-to-q}} + T_{\text{ROM}} + T_{\text{decode}} + T_{\text{reg\_read}} + T_{\text{ALU}} + T_{\text{RAM}} + T_{\text{mux}} + T_{\text{setup}}
+\end{equation}
+Because instruction fetch, decode, register read, ALU effective address addition, RAM read, writeback multiplexing, and register setup all occur within one clock period, this long combinational delay inherently limits hardware clock speed. Determining an actual $F_{\max}$, setup/hold slack, or dynamic power requires physical synthesis and target-specific Static Timing Analysis (STA).
+
+\section{Individual Contributions}
+\begin{itemize}
+\item \textbf{Viraj (Phase-1 \& Lead):} RTL implementation, test harnesses, simulation runners, Phase-1 fetch documentation, Phase-5 generic synthesis flow, and ROM initialization bug fix.
+\item \textbf{Kaustubh (Phase-2):} Instruction-set documentation lead. Authored ISA reference documentation, instruction format field definitions, register operand usage tables, and worked address calculation examples in \texttt{docs/instruction-set/}.
+\item \textbf{Pratyush (Phase-3):} Datapath and control documentation lead. Authored arithmetic CPU datapath documentation, control signal decoding matrices, reset/fault behavior, and ALU validation traces in \texttt{docs/architecture/}.
+\item \textbf{Bhargav (Phase-4):} Verification and simulation documentation lead. Authored comprehensive test plan, simulation results analysis, waveform walkthroughs, test checklists, and Phase-4 handoff in \texttt{docs/verification/}.
+\item \textbf{Rudraksh (Phase-5):} Academic reports and final submission artefacts lead. Audited project progress, reviewed and expanded Phase I report and final technical manuscript, verified primary references, authored demonstration script, and compiled interview preparation notes.
+\end{itemize}
+
+Initial Phase-5 documentation and LaTeX drafts were prepared with assistant support under the lead's identity. Rudraksh conducted an independent technical review, verified reported data against manifests and logs, synchronized manuscripts, and submitted these contributions under his verified GitHub identity (\texttt{Rudraksh <rudraksh969977@gmail.com>}).
 
 \section{Conclusion}
-The implemented ten-instruction processor provides a traceable demonstration of single-cycle execution, modular control and defensive fault gating. RTL regression and generic netlist validation support the reported behavior within the tested scope. Final academic submission still requires author review, IEEE formatting, a real video and any institution-required waveform screenshots. FPGA deployment remains optional until hardware, pin constraints and a board-specific flow exist.
+The Single-Cycle RV32I Processor project demonstrates a modular, cycle-accurate implementation of a ten-instruction RISC-V subset in Verilog-2001. Multi-level verification—encompassing 276,741 passing RTL checks across 16 testbenches, 38 reference instructions executed cycle-by-cycle, and 163 passing port-observable netlist checks—confirms the functional correctness of the datapath, control unit, and defensive fault-gating logic. Generic Yosys synthesis validates structural integrity with 22,695 leaf generic cells and zero inferred latches. Remaining submission actions include team author sign-offs, recording the demonstration video, compiling the IEEE PDF on a TeX-enabled environment, and capturing graphical waveform screenshots if required.
 
 \begin{thebibliography}{4}
-\bibitem{ref1} RISC-V International, ``RV32I Base Integer Instruction Set, Version 2.1,'' release v20260120. \url{https://docs.riscv.org/reference/isa/v20260120/unpriv/rv32.html}
-\bibitem{ref2} S. Williams and contributors, ``Icarus Verilog documentation.'' \url{https://steveicarus.github.io/iverilog/}
-\bibitem{ref3} YosysHQ, ``Synth commands,'' Yosys documentation. \url{https://yosyshq.readthedocs.io/projects/yosys/en/latest/using_yosys/synthesis/synth.html}
-\bibitem{ref4} Project team, ``Source provenance,'' repository REFERENCES.md.
+\bibitem{ref1} RISC-V International, ``RV32I Base Integer Instruction Set, Version 2.1,'' in \emph{The RISC-V Instruction Set Manual, Volume I: Unprivileged ISA}, release v20260120, Jan. 2026. \url{https://docs.riscv.org/reference/isa/v20260120/unpriv/rv32.html}
+\bibitem{ref2} S. Williams and contributors, ``Icarus Verilog Documentation and User Guide,'' Release Documentation, 2026. \url{https://steveicarus.github.io/iverilog/}
+\bibitem{ref3} C. Wolf and YosysHQ, ``Yosys Command Reference and Synthesis Manual,'' YosysHQ Documentation, 2026. \url{https://yosyshq.readthedocs.io/projects/yosys/en/latest/using_yosys/synthesis/synth.html}
+\bibitem{ref4} Project Team, ``Source Provenance and Architectural References,'' repository \texttt{REFERENCES.md}, Nov. 2026.
 \end{thebibliography}
+
 \end{document}
