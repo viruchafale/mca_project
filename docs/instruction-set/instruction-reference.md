@@ -306,6 +306,59 @@ existing encoding vector `bne x25,x26,-4` at `PC=0x40` in execution-examples.md.
 
 ---
 
+---
+
+## Kaustubh's additions — register-operand usage tables
+
+*Added as a separate commit to provide a quick reference for which registers
+each instruction reads and writes. Useful when reasoning about data hazards
+in a future pipelined design and for understanding why some instruction
+formats have no rd field.*
+
+### R-format instructions: register reads and writes
+
+All five R-format instructions read two source registers and write one
+destination register. No memory access and no immediate operand are involved.
+
+| Instruction | Reads rs1? | Reads rs2? | Writes rd? | Writes memory? | Modifies PC? |
+|---|:---:|:---:|:---:|:---:|:---:|
+| ADD rd, rs1, rs2 | ✓ | ✓ | ✓ | — | — |
+| SUB rd, rs1, rs2 | ✓ | ✓ | ✓ | — | — |
+| AND rd, rs1, rs2 | ✓ | ✓ | ✓ | — | — |
+| OR  rd, rs1, rs2 | ✓ | ✓ | ✓ | — | — |
+| XOR rd, rs1, rs2 | ✓ | ✓ | ✓ | — | — |
+
+**Key observations for R-format:**
+
+- All five use **exactly the same register-file interface**: two read ports
+  (`read_reg1 = rs1`, `read_reg2 = rs2`) and one write port
+  (`write_reg = rd`, `write_data = ALU result`, `reg_write = 1`).
+- The only difference between them is the ALU operation selected by the
+  decoder using funct3 and funct7. The register file itself is agnostic
+  to the operation type.
+- If `rd = x0`, the write is silently discarded by the register file RTL
+  (`write_reg != 5'd0` condition). The ALU still computes the result; it
+  is simply never stored.
+- If `rs1 = x0` or `rs2 = x0`, the register file returns `0x00000000`
+  for that port. This allows constructs like `SUB rd, rs1, x0` (copy rs1)
+  or `OR rd, x0, rs2` (copy rs2).
+- Neither rs1 nor rs2 is modified; the write targets only rd.
+
+**Example — ADD x3, x1, x2 (from encoding vectors):**
+```
+read_reg1 = 1  → read_data1 = value of x1
+read_reg2 = 2  → read_data2 = value of x2
+ALU output     = x1 + x2 (32-bit wrap)
+write_reg  = 3, write_data = ALU output, reg_write = 1
+→ x3 updated at next rising clock edge
+```
+
+The register file testbench (phase-2) verifies these read-and-write
+semantics for all 32 registers. No R-format ALU operation has been
+wired up yet; the ALU belongs to phase-3.
+
+---
+
 See [field encodings](instruction-encoding.md), [worked examples](execution-examples.md),
 [module interfaces](../phase-2-interfaces.md) and [measured component evidence](../../reports/verification/phase-2.md).
 The ISA source is listed in REFERENCES.md; component behavior is defined by the current RTL.
