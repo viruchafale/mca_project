@@ -9,7 +9,65 @@ Assistant support should be disclosed when used; it does not establish that a
 member has personally reviewed, run or understood the work. Names in an assignment
 table alone are not completed contributions.
 
-## Current handoff: Kaustubh on phase-2
+## Current handoff: Pratyush on phase-3
+
+Kaustubh's contribution 537996c was reviewed and accepted for development
+progression. His three original files are preserved. See
+docs/reviews/kaustubh-phase-2-review.md for five verified encodings, the fresh
+phase-2 regression and technical wording corrections.
+
+The lead's phase-3 work implements the ALU, exact arithmetic decoder, writeback
+mux and arithmetic CPU with diagnostic fault hold. It awaits explicit publication
+approval. After publication, Pratyush owns these separate files:
+
+| File | Required substantive work |
+|---|---|
+| docs/architecture/datapath.md | Draw actual core connections; trace ADD and negative ADDI through operand selection and writeback |
+| docs/architecture/control-unit.md | Explain exact decoding, unsupported encodings and safe defaults |
+| docs/architecture/control-signals.md | Produce control tables and explain PC/write gating, reset and sticky faults |
+
+No Verilog or testbench coding is required. Inspect docs/phase-3-interfaces.md,
+the actual new RTL and reports/verification/phase-3.md. Read real waveform signals
+before claiming a trace review. CPU memory/branch execution is not yet available.
+
+Run these commands only after phase-3 is published, using Pratyush's own GitHub
+authentication and verified author identity. Replace the email placeholder with
+his actual associated email; use his preferred full name.
+
+```bash
+git clone --branch phase-3 https://github.com/viruchafale/mca_project.git mca_project-pratyush
+cd mca_project-pratyush
+git config --local user.name "Pratyush"
+git config --local user.email "YOUR_VERIFIED_GITHUB_EMAIL"
+git config --local pull.ff only
+git fetch origin
+git switch phase-3
+git pull --ff-only origin phase-3
+git status --short --branch
+make test
+```
+
+After completing and reviewing the assigned documents:
+
+```bash
+git diff -- docs/architecture/datapath.md docs/architecture/control-unit.md docs/architecture/control-signals.md
+git status --short --branch
+git add -- docs/architecture/datapath.md docs/architecture/control-unit.md docs/architecture/control-signals.md
+git diff --cached --check
+git diff --cached
+git commit -m "docs: explain RV32I datapath and control signals"
+git show --stat --format=fuller HEAD
+git push origin HEAD:refs/heads/phase-3
+```
+
+Stop on conflicts or rejected pushes. Do not force, amend another person's
+commit or claim unfinished tasks. Send the actual commit link for review.
+Phase-4 must start from the accepted phase-3 tip including Pratyush's work.
+
+## Historical handoff: Kaustubh on phase-2
+
+Completed in 537996c and reviewed as described above. The original instructions
+below are retained for context; do not recreate the already-accepted contribution.
 
 The lead's implementation and evidence were published at 44cfd1d. Viraj subsequently
 requested one new documentation commit; the assistant prepared the three references

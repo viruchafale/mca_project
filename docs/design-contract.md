@@ -1,6 +1,6 @@
 # Lead's design contract
 
-Status: lead-prepared implementation specification and cumulative phase-2 behavior.
+Status: lead-prepared implementation specification through phase-3.
 Assigned architecture explanations remain separate documentation work.
 
 ## Implemented in phase-1
@@ -42,6 +42,15 @@ invalid stores are ignored, and address_valid remains available for later CPU ga
 These are standalone module implementations. See [interfaces](phase-2-interfaces.md).
 No instruction execution, hardware fault controller or processor top exists yet.
 
+## Added in phase-3
+
+The ALU, exact arithmetic decoder and writeback mux are now integrated in
+rv32i_cpu. Six arithmetic instructions execute, with PC+4 and rising-edge register
+writes. Reset initializes PC, registers and fault state. Invalid fetches and
+unsupported instructions suppress writes, hold PC and raise sticky fault causes.
+The data-memory module remains standalone, and memory writeback is tied off.
+See [current interfaces](phase-3-interfaces.md). Phase-4 adds LW/SW/BEQ/BNE.
+
 ## Planned full processor
 
 - Single-cycle, non-pipelined, separate 1 KiB instruction and data memories.
@@ -56,5 +65,5 @@ No instruction execution, hardware fault controller or processor top exists yet.
   invalid memory addresses or a taken misaligned branch. No privileged trap claim.
 - Ideal no-stall CPI=1; clock-frequency claims require actual timing evidence.
 
-Later phases integrate instruction execution and fault handling. Current tests
-establish component behavior and encoding fields, not complete RV32I compliance.
+Later phases complete memory/branch execution and extend fault handling. Current
+tests establish arithmetic execution and component behavior, not complete RV32I compliance.

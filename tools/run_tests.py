@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reproduce cumulative phase-2 HDL checks. No third-party Python packages required."""
+"""Reproduce cumulative phase-3 HDL checks. No third-party Python packages required."""
 import argparse
 from datetime import datetime, timezone
 import hashlib
@@ -15,10 +15,12 @@ ROOT = Path(__file__).resolve().parents[1]
 BUILD = ROOT / "build"
 RTL = [ROOT / "rtl" / name for name in [
     "pc.v", "instruction_memory.v", "register_file.v",
-    "immediate_generator.v", "data_memory.v",
+    "immediate_generator.v", "data_memory.v", "alu.v", "control_unit.v",
+    "writeback_mux.v", "rv32i_cpu.v",
 ]]
 BENCHES = ["tb_pc", "tb_instruction_memory", "tb_fetch", "tb_register_file",
-           "tb_immediate_generator", "tb_data_memory"]
+           "tb_immediate_generator", "tb_data_memory", "tb_alu", "tb_control_unit",
+           "tb_writeback_mux", "tb_rv32i_cpu", "tb_cpu_faults"]
 
 
 def run(command, timeout=15):
@@ -31,7 +33,8 @@ def compile_command(compiler, top, source, output, rtl=True, standard="2012"):
     if os.environ.get("IVL_BASE"):
         command += ["-B", os.environ["IVL_BASE"]]
     command += ["-g" + standard, "-Wall", "-s", top, "-o", str(output)]
-    return command + ([str(p) for p in RTL] if rtl else []) + [str(source)]
+    sources = ([str(p) for p in RTL] if rtl else []) + [str(source)]
+    return command + list(dict.fromkeys(sources))
 
 
 def check_simulation(runtime, executable, top, wave=False, timeout=15):
@@ -49,13 +52,15 @@ def check_simulation(runtime, executable, top, wave=False, timeout=15):
 def validate_inputs():
     required = RTL + [ROOT / "tb" / (top + ".sv") for top in BENCHES]
     required += [ROOT / "programs/fetch_smoke.hex", ROOT / "programs/encoding-vectors.json",
+                 ROOT / "programs/arithmetic_smoke.hex", ROOT / "programs/phase3_faults.hex",
                  ROOT / "tools/check_encodings.py"]
     for path in required:
         if not path.is_file():
             raise RuntimeError("missing required input: " + str(path.relative_to(ROOT)))
-    image = (ROOT / "programs/fetch_smoke.hex").read_text().split()
-    if len(image) != 256 or any(not re.fullmatch(r"[0-9a-fA-F]{8}", x) for x in image):
-        raise RuntimeError("fetch_smoke.hex must have exactly 256 hexadecimal words")
+    for name in ["fetch_smoke.hex", "arithmetic_smoke.hex", "phase3_faults.hex"]:
+        image = (ROOT / "programs" / name).read_text().split()
+        if len(image) != 256 or any(not re.fullmatch(r"[0-9a-fA-F]{8}", x) for x in image):
+            raise RuntimeError(name + " must have exactly 256 hexadecimal words")
 
 
 def harness_self_check(compiler, runtime):
@@ -142,7 +147,7 @@ def main():
         for path in RTL:
             top = path.stem
             command = compile_command(compiler, top, path, BUILD / (top + "_lint.vvp"),
-                                      rtl=False, standard="2001")
+                                      rtl=True, standard="2001")
             result = run(command)
             log = result.stdout + result.stderr
             (BUILD / (top + "_lint.log")).write_text(log)
@@ -167,7 +172,7 @@ def main():
                 report["harness_probes"] = harness_self_check(compiler, runtime)
         report["status"] = "pass"
         report["checks"] = sum(test["checks"] for test in report["tests"])
-        print("PASS: phase-2 checks=" + str(report["checks"]))
+        print("PASS: phase-3 checks=" + str(report["checks"]))
         return 0
     except (RuntimeError, subprocess.TimeoutExpired, OSError) as error:
         report["status"] = "fail"

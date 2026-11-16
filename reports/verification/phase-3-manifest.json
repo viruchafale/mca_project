@@ -1,0 +1,227 @@
+{
+  "milestone": "phase-3",
+  "status": "pass",
+  "base_commit_at_run": "24082cc6d65de57238acbbaf64373dfb080111b0",
+  "working_tree_dirty_at_run": true,
+  "source_identity_note": "Fresh Mac run; uncommitted phase-3 inputs are pinned by hashes.",
+  "started_utc": "2026-11-16T12:44:06.719348+00:00",
+  "compiler_version": "Icarus Verilog version 13.0 (stable) (v13_0)",
+  "command": "python3 tools/run_tests.py --wave --self-check",
+  "hdl_checks": 145292,
+  "encoding_checks": 10,
+  "runner_rejection_probes": [
+    "fatal",
+    "no_summary",
+    "timeout"
+  ],
+  "hdl_tests": [
+    {
+      "top": "tb_pc",
+      "checks": 10,
+      "status": "pass"
+    },
+    {
+      "top": "tb_instruction_memory",
+      "checks": 20,
+      "status": "pass"
+    },
+    {
+      "top": "tb_fetch",
+      "checks": 11,
+      "status": "pass"
+    },
+    {
+      "top": "tb_register_file",
+      "checks": 103,
+      "status": "pass"
+    },
+    {
+      "top": "tb_immediate_generator",
+      "checks": 12294,
+      "status": "pass"
+    },
+    {
+      "top": "tb_data_memory",
+      "checks": 785,
+      "status": "pass"
+    },
+    {
+      "top": "tb_alu",
+      "checks": 503,
+      "status": "pass"
+    },
+    {
+      "top": "tb_control_unit",
+      "checks": 131072,
+      "status": "pass"
+    },
+    {
+      "top": "tb_writeback_mux",
+      "checks": 20,
+      "status": "pass"
+    },
+    {
+      "top": "tb_rv32i_cpu",
+      "checks": 104,
+      "status": "pass"
+    },
+    {
+      "top": "tb_cpu_faults",
+      "checks": 370,
+      "status": "pass"
+    }
+  ],
+  "input_sha256": {
+    "Makefile": "0d51cad9b9d884294ca9cdbc2e570acb79a7df00c9baa40b0fbca6d850fc036b",
+    "programs/arithmetic_smoke.S": "32f25d78c35461e27806978511c4e5fcc0b1cf0728460bfa66195293025ddef2",
+    "programs/arithmetic_smoke.hex": "bb6bf759af5c8e5a88969e4b257069ce499e6a8a7021cb32219d624f2026df55",
+    "programs/encoding-vectors.json": "d0512b50cbc27a808d9685249c01a012789469fc3ccb2ed1226123dcd92c924c",
+    "programs/fetch_smoke.S": "e49f507498f315b3787b73ff219404957832637c0abba418e807fe720dd4ddf5",
+    "programs/fetch_smoke.hex": "01c58fd6f7c5ba74957df336618353d8c396390ac30b36ce9a4f5a0c9ce72c60",
+    "programs/phase3_faults.hex": "d6501c33e1235977e4fb715ef46fe7debcef0a4451da024f8a9a73bc44759445",
+    "programs/phase3_faults.md": "0d0b817fe74df7579d688c423490ad2dda9949ec555506221479738126f6ea03",
+    "rtl/alu.v": "02386841bbd008bb87ec66838bc5d5119b21b1bc9dc0467fd1e9525a377958b6",
+    "rtl/control_unit.v": "4b01e97d8518c5680a3633e1c093c84edee307be5f97280cd9d9a080c67faa04",
+    "rtl/data_memory.v": "641af570e216ff04b5a9cb9db812fa39e6a9c9babf9a942d2bb13f450447d0ec",
+    "rtl/immediate_generator.v": "448f54458f75af403c73f7720e681318bcd747da27711a883082844d31d914cc",
+    "rtl/instruction_memory.v": "ea9b61a15a10f7d80825a73bf5449237caab9470c67267d65b1449ccce627790",
+    "rtl/pc.v": "4403fbe3c94f08dbd4533a3d629e3e5847fc6f30279c25e5450e89a22e2b23d3",
+    "rtl/register_file.v": "e895df546f1a16c812ce59a0990655c613ea35174dbd1b83410125bad1d10a2f",
+    "rtl/rv32i_cpu.v": "e5d82dbc907bab56c8633a85bd35ce60c4994139e0d38daa1f4e62de4f1a60b6",
+    "rtl/writeback_mux.v": "7dfdbd7642ff1b5dbb638ff568ad1ca9e495d18712c9e41028457c82ae7bfe58",
+    "tb/tb_alu.sv": "117f096bbd415db13fa26f3e3286fda9bc2237bd149dfc95b5a669df2519db9e",
+    "tb/tb_control_unit.sv": "517e024942735603c9c8a165c97bab3112eac75d14cde57e023f5d231e2e82a6",
+    "tb/tb_cpu_faults.sv": "34cdcde2f95ce660d57e2f42ed83b064540c0b18a06d720cd81038eadae154fc",
+    "tb/tb_data_memory.sv": "f21b49c63669d09c94496906d2bb40310110d790d33b678d627efda41fd7f7c5",
+    "tb/tb_fetch.sv": "83dcfd09b4fbbc0bc0083bde60fe2ff5aa9b44d7f1e61b955e9798e39c8eca67",
+    "tb/tb_immediate_generator.sv": "51d80af3931822818d7e412b0c576e5913bdd3c18b10412b19a2c8f6e9ce4e69",
+    "tb/tb_instruction_memory.sv": "3fcc5a6689953dc8a20a36a6f5a0d23f838e22dd11dbe084456c8cb167323281",
+    "tb/tb_pc.sv": "1e9d88d76307717aa8914fab59af6c52d06e5a90aa9159afa3d62a1e9dcbc428",
+    "tb/tb_register_file.sv": "3febc479db0dafd5ed875557cf7584de2e99c653bfe221a036876f3b48393f65",
+    "tb/tb_rv32i_cpu.sv": "fc81c2676b7abcc9ae1f2ce1bb55dee719283d6fd7d78482afe4f53599a06062",
+    "tb/tb_writeback_mux.sv": "29efc49cd00fba33ac8b7eea359aaa53f33693cbe030eb54fef7e2d22c7a704f",
+    "tools/check_encodings.py": "12ad5921dad2f393a4b33ef57bc31c751ad698aadbb077a65300a037c4bd98fc",
+    "tools/run_tests.py": "83bcf83361bf165d0ccb2ab887c31ba2a36ddf7abeb7a257e855a4d3cd0bccd5"
+  },
+  "lint": [
+    {
+      "top": "pc",
+      "status": "pass",
+      "diagnostics": ""
+    },
+    {
+      "top": "instruction_memory",
+      "status": "pass",
+      "diagnostics": ""
+    },
+    {
+      "top": "register_file",
+      "status": "pass",
+      "diagnostics": ""
+    },
+    {
+      "top": "immediate_generator",
+      "status": "pass",
+      "diagnostics": ""
+    },
+    {
+      "top": "data_memory",
+      "status": "pass",
+      "diagnostics": ""
+    },
+    {
+      "top": "alu",
+      "status": "pass",
+      "diagnostics": ""
+    },
+    {
+      "top": "control_unit",
+      "status": "pass",
+      "diagnostics": ""
+    },
+    {
+      "top": "writeback_mux",
+      "status": "pass",
+      "diagnostics": ""
+    },
+    {
+      "top": "rv32i_cpu",
+      "status": "pass",
+      "diagnostics": ""
+    }
+  ],
+  "evidence": {
+    "tb_pc": {
+      "log": "phase-3-tb_pc.log",
+      "compile_diagnostics": "",
+      "generated_waveform": "build/tb_pc.vcd",
+      "waveform_bytes": 1851,
+      "waveform_sha256": "69cdd0dd763d1629fd741b3f32b01d19a10ba63f6e76534c7ed68145771bb96f"
+    },
+    "tb_instruction_memory": {
+      "log": "phase-3-tb_instruction_memory.log",
+      "compile_diagnostics": "",
+      "generated_waveform": "build/tb_instruction_memory.vcd",
+      "waveform_bytes": 3342,
+      "waveform_sha256": "a697333be59d6ec2178c7c862fdd6820685ce4cdb499fdcfd4e3946bd20920de"
+    },
+    "tb_fetch": {
+      "log": "phase-3-tb_fetch.log",
+      "compile_diagnostics": "",
+      "generated_waveform": "build/tb_fetch.vcd",
+      "waveform_bytes": 22127,
+      "waveform_sha256": "068515db0dbf302ca8e289220627c9d9b6a7f23a3bd1e6c515cc2f26c11a1430"
+    },
+    "tb_register_file": {
+      "log": "phase-3-tb_register_file.log",
+      "compile_diagnostics": "",
+      "generated_waveform": "build/tb_register_file.vcd",
+      "waveform_bytes": 16593,
+      "waveform_sha256": "35ac179810a4d427d63723e70574fff810e916c7a83fbf5f8638a760d870a54a"
+    },
+    "tb_immediate_generator": {
+      "log": "phase-3-tb_immediate_generator.log",
+      "compile_diagnostics": "",
+      "generated_waveform": "build/tb_immediate_generator.vcd",
+      "waveform_bytes": 2891243,
+      "waveform_sha256": "65630f5d8aae834cd2421cfdaac288bc48196ec67c0cce9d432f02a8861c4c61"
+    },
+    "tb_data_memory": {
+      "log": "phase-3-tb_data_memory.log",
+      "compile_diagnostics": "",
+      "generated_waveform": "build/tb_data_memory.vcd",
+      "waveform_bytes": 133062,
+      "waveform_sha256": "c4322f253ce1cbd8549dda050b83bfecb535091e9a98aafdfba1a81b06e2c51f"
+    },
+    "tb_alu": {
+      "log": "phase-3-tb_alu.log",
+      "compile_diagnostics": "",
+      "generated_waveform": "build/tb_alu.vcd",
+      "waveform_bytes": 83578,
+      "waveform_sha256": "f9e8af80987cd2e20de1b2fbf3d75571b418abb31b32908fe98f8a9efdb0eb61"
+    },
+    "tb_control_unit": {
+      "log": "phase-3-tb_control_unit.log",
+      "compile_diagnostics": ""
+    },
+    "tb_writeback_mux": {
+      "log": "phase-3-tb_writeback_mux.log",
+      "compile_diagnostics": ""
+    },
+    "tb_rv32i_cpu": {
+      "log": "phase-3-tb_rv32i_cpu.log",
+      "compile_diagnostics": "",
+      "generated_waveform": "build/tb_rv32i_cpu.vcd",
+      "waveform_bytes": 12874,
+      "waveform_sha256": "fee3aa7a0881d8523f072f04397c8657611739a69092399a40185cc008e80c9b"
+    },
+    "tb_cpu_faults": {
+      "log": "phase-3-tb_cpu_faults.log",
+      "compile_diagnostics": "",
+      "generated_waveform": "build/tb_cpu_faults.vcd",
+      "waveform_bytes": 42175,
+      "waveform_sha256": "15391fa723796a7f02bcfc5298d5db94d27eaa11b0f174d0a24b740c6ab83471"
+    }
+  },
+  "encoding_log": "phase-3-encoding-checks.log"
+}

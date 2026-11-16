@@ -2,8 +2,8 @@
 
 College project by Viraj, Kaustubh, Pratyush, Rudraksh and Bhargav.
 
-**Current development milestone: phase-2 (registers, immediates and data RAM).**
-The complete ten-instruction CPU is planned; this branch does not execute instructions yet.
+**Current development milestone: phase-3 (arithmetic CPU integration).**
+The core executes ADD, SUB, AND, OR, XOR and ADDI. LW/SW/BEQ/BNE remain for phase-4.
 The `main` branch is intentionally left at its original commit.
 
 ## What is implemented
@@ -17,8 +17,11 @@ The `main` branch is intentionally left at its original commit.
 - Combinational I/S/B immediate generator with explicit format selection.
 - Checked 1 KiB data RAM with asynchronous read, synchronous write and reset preservation.
 - Independent encoding checks for ten hand-calculated target instruction words.
+- Five-operation ALU, exact arithmetic decoder, writeback mux and integrated arithmetic CPU.
+- Sticky fetch/illegal-instruction diagnostic faults with write suppression and reset recovery.
 
-The integrated fetch test connects the PC to ROM and supplies PC+4. It does not decode, execute or take branches.
+The original fetch test still checks PC/ROM composition. The new CPU test executes
+seventeen arithmetic instructions and checks the architectural register results.
 
 ## Run
 
@@ -83,14 +86,26 @@ Phase-2 adds three standalone modules; [their interfaces](docs/phase-2-interface
 define reset behavior, immediate formats and memory validity. The complete regression
 includes the original phase-1 tests. See [phase-2 evidence](reports/verification/phase-2.md).
 
-Kaustubh owns the instruction reference, encoding explanation and worked examples
-under docs/instruction-set/. The lead has now prepared assistant-supported reference
-documents and examples at Viraj's request. Kaustubh's independent examples, source/test
-review and substantive own-account commit remain pending. See CONTRIBUTING.md
-for exact files, commands and the next handoff gate.
+Kaustubh's substantive instruction-set contribution was accepted at 537996c.
+Its five new examples were rechecked against the actual decoder helper, and the
+phase-2 regression passed. His files under docs/instruction-set/ are preserved.
+See the review corrections linked below and CONTRIBUTING.md for the current handoff.
 
 ## Current limits
 
-No ALU, instruction decoder, branch unit, writeback mux or CPU top is implemented yet.
-No ISA-execution, synthesis, hardware timing or FPGA claim is made.
+No CPU load/store or branch instruction execution is implemented yet.
+No synthesis, hardware timing or FPGA claim is made.
 No prototype video or IEEE report is complete yet.
+
+## Phase-3 handoff
+
+Phase-3 starts from Kaustubh's contribution 537996c. His original documents are
+preserved as historical phase-2 material; read the [review corrections](docs/reviews/kaustubh-phase-2-review.md)
+alongside them. All five of his new encodings checked correctly, and the original
+13,223-check regression passed again before phase-3 work.
+
+See [current CPU interfaces](docs/phase-3-interfaces.md) and [phase-3 evidence](reports/verification/phase-3.md).
+Pratyush owns datapath.md, control-unit.md and control-signals.md under docs/architecture/.
+Those files are assignments, not a claim of completed member work. Phase-4 waits
+for his substantive contribution. Current phase-3 implementation is local until
+its explicitly approved push.
