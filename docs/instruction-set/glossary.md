@@ -154,3 +154,92 @@ correct bit pattern.
 | I | 12 (contiguous, [31:20]) | −2048 to +2047 | ADDI, LW |
 | S | 12 (split, [31:25] + [11:7]) | −2048 to +2047 | SW |
 | B | 12 stored + 1 implicit zero | −4096 to +4094 (even steps) | BEQ, BNE |
+
+---
+
+## Part 3 — Memory, addressing and branch control flow
+
+**Byte address**
+A memory address that identifies a single byte. RV32I uses byte addresses
+throughout: load and store instructions specify byte addresses, and all
+effective-address arithmetic produces byte addresses. This project's data
+RAM accepts byte addresses from the CPU but internally stores 32-bit aligned
+words. The word index is derived from address bits [9:2]; bits [1:0] must
+be zero for the access to be valid.
+
+**Word address**
+A memory address that identifies a 32-bit (4-byte) aligned unit. The data
+RAM in this project has 256 word locations, so valid word indices are 0–255
+(byte addresses 0x000–0x3FC). The hardware converts a byte address to a
+word index by discarding the low two bits: `word_index = address[9:2]`.
+
+**Effective address**
+The final 32-bit byte address computed at instruction-execution time for a
+load or store. It is calculated as `effective_address = rs1 + sign_extend(offset)`,
+where `rs1` is the 32-bit base-register value and `offset` is the
+sign-extended 12-bit immediate from the instruction word. Neither operand is
+shifted or scaled before the addition.
+
+**address_valid**
+The combinational output of the data memory module that indicates whether
+the presented byte address is within range and properly aligned. It is 1
+when `address[31:10] == 0` and `address[1:0] == 2'b00`; otherwise 0.
+An invalid address causes reads to return zero and stores to be silently
+ignored. A future CPU must check this signal and implement its fault policy;
+the standalone RAM module does not halt the processor.
+
+**Alignment**
+A memory access is aligned when the byte address is a multiple of the
+access size. For word (32-bit) operations, alignment requires the two
+low address bits to be zero. Addresses such as 0x001, 0x002 and 0x003 are
+unaligned for a word access and will cause `address_valid = 0` in this
+implementation. Only aligned word accesses are supported; no byte or
+half-word interface is provided.
+
+**Program counter (PC)**
+A 32-bit register that holds the byte address of the instruction currently
+being fetched. After a normal (non-branch) instruction, the PC advances by
+4 (the size of one 32-bit instruction word). After a taken branch, the PC
+is loaded with the branch target address. The PC module from phase-1
+(`rtl/pc.v`) implements synchronous reset, enable/hold and a configurable
+reset address.
+
+**Branch offset**
+The signed byte displacement added to the current PC to form a branch
+target. It is encoded as a B-format immediate (13 bits, always even).
+The offset is added to the PC of the branch instruction itself, not to
+PC+4. Example: a branch at PC=0x20 with offset −8 targets 0x18.
+
+**Branch taken / not-taken**
+The two possible outcomes of a conditional branch instruction:
+- *Taken*: the branch condition is true; the PC is loaded with
+  `current_PC + B_offset`.
+- *Not-taken*: the condition is false; the PC advances normally to
+  `current_PC + 4`.
+
+For BEQ, the condition is `rs1 == rs2`. For BNE, it is `rs1 != rs2`.
+In either case no register is written and no memory access occurs.
+Phase-2 verifies the immediate encoding; the comparator and PC mux
+belong to future phases.
+
+**Reset**
+An active-high synchronous signal that initialises hardware state at the
+start of simulation or on power-up. In the register file, reset clears all
+32 registers to zero and suppresses normal writes. In the data RAM, reset
+suppresses writes but deliberately preserves existing memory contents, so a
+reset does not erase previously stored data. In the PC module, reset loads
+the configured start address.
+
+**Combinational logic**
+Logic whose outputs depend only on current inputs, with no internal state.
+Both the immediate generator and the address-valid check are combinational:
+their outputs update continuously as inputs change, with no clock required.
+This means the immediate is available in the same cycle as the instruction
+word arrives, without waiting for a clock edge.
+
+**Synchronous write**
+A write that takes effect only on the rising edge of the clock, not
+immediately when inputs change. The register file and data RAM both use
+synchronous writes: `write_data` is captured into the selected location at
+the next rising edge, provided all enables and validity conditions are met.
+Reads in both modules are asynchronous (combinational).
