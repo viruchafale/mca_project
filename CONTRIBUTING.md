@@ -9,14 +9,14 @@ Assistant support should be disclosed when used; it does not establish that a
 member has personally reviewed, run or understood the work. Names in an assignment
 table alone are not completed contributions.
 
-## Current handoff: Rudraksh on phase-4
+## Current handoff: Bhargav on phase-4
 
 Pratyush's four phase-3 documentation commits through aa089e5 were reviewed and
 preserved without changes. See [review](docs/reviews/pratyush-phase-3-review.md).
 Phase-4 integrates LW, SW, BEQ and BNE with the existing arithmetic CPU. The lead
 prepares one implementation commit; publication requires explicit lead approval.
 
-After publication, Rudraksh owns these separate documentation files:
+After publication, Bhargav owns these separate documentation files:
 
 | File | Substantive contribution |
 |---|---|
@@ -37,9 +37,9 @@ Use your own GitHub authentication, collaborator access and verified author emai
 Replace the email placeholder and use your preferred full name:
 
 ```bash
-git clone --branch phase-4 https://github.com/viruchafale/mca_project.git mca_project-rudraksh
-cd mca_project-rudraksh
-git config --local user.name "Rudraksh"
+git clone --branch phase-4 https://github.com/viruchafale/mca_project.git mca_project-bhargav
+cd mca_project-bhargav
+git config --local user.name "Bhargav"
 git config --local user.email "YOUR_VERIFIED_GITHUB_EMAIL"
 git config --local pull.ff only
 git fetch origin
@@ -67,7 +67,7 @@ git push origin HEAD:refs/heads/phase-4
 
 Stop on conflicts or rejected pushes; do not force or overwrite another person's
 work. Send the actual commit URL to the lead. Phase-5 starts from the accepted
-phase-4 tip including Rudraksh's contribution. Main stays untouched. Branch commit
+phase-4 tip including Bhargav's contribution; Rudraksh leads Phase-5. Main stays untouched. Branch commit
 history provides attribution even when default-branch contribution graphs omit it.
 
 ## Historical handoff: Pratyush on phase-3

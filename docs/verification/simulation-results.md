@@ -1,6 +1,6 @@
-# Simulation results — Rudraksh's Phase-4 assignment
+# Simulation results — Bhargav's Phase-4 assignment
 
-Status: awaiting Rudraksh's actual result organization and review.
+Status: awaiting Bhargav's actual result organization and review.
 
 Reproduce the documented command where tools are available. Record actual source
 SHA, commands, tool versions, date, results and any unavailable dependency.

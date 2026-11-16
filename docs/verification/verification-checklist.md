@@ -1,4 +1,4 @@
-# Verification checklist — Rudraksh's assignment
+# Verification checklist — Bhargav's assignment
 
 Status: checklist to complete with actual evidence, not a completed sign-off.
 

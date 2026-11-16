@@ -26,7 +26,7 @@ Academic Phase I and Phase II are separate from these five development phases.
 Academic reports, video, the other four members' contributions and complete CPU
 execution remain pending. Viraj's existing implementation commits and requested
 documentation work are recorded under the lead's existing Git identity.
-The lead created this initial status record; Bhargav takes over progress/artifact
+The lead created this initial status record; Rudraksh takes over progress/artifact
 curation in phase-5. Do not present task assignments as completed contributions.
 
 ## Completed architecture preparation
@@ -72,8 +72,8 @@ not modified by phase-3 development.
 | Phase-4 implementation | All ten instructions integrated locally, including memory and conditional branches |
 | Verification | 276,741 HDL checks passed; 38-instruction independent reference covers all ten and four branch outcomes |
 | Publication | Prepared as one implementation commit; push requires explicit approval |
-| Rudraksh | Test plan, results and verification-checklist outlines prepared; own contribution pending |
-| Phase-5 | Not started; wait for Rudraksh's accepted handoff |
+| Bhargav | Test plan, results and verification-checklist outlines prepared; own contribution pending |
+| Phase-5 | Not started; wait for Bhargav's accepted handoff |
 
 Earlier sections are historical snapshots. Phase-4 is based on accepted aa089e5;
 main and previous phase tips are preserved. No member identity is impersonated.

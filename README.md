@@ -57,8 +57,8 @@ Do not commit machine-specific paths or downloaded tool binaries.
 | phase-1 | PC, instruction ROM and harness | Viraj |
 | phase-2 | Register file, immediates and data memory | Kaustubh |
 | phase-3 | ALU, decoder, writeback and arithmetic integration | Pratyush |
-| phase-4 | LW/SW, BEQ/BNE and complete CPU regression | Rudraksh |
-| phase-5 | Final verification, synthesis and academic deliverables | Bhargav |
+| phase-4 | LW/SW, BEQ/BNE and complete CPU regression | Bhargav |
+| phase-5 | Final verification, synthesis and academic deliverables | Rudraksh |
 
 Target subset: ADD, SUB, AND, OR, XOR, ADDI, LW, SW, BEQ and BNE.
 See [design contract](docs/design-contract.md), [phase progress](docs/project-progress/phase-progress.md),
@@ -125,6 +125,6 @@ The [phase-4 report](reports/verification/phase-4.md) records 276,741 passing HD
 checks, plus the independent 38-instruction reference trace and software checks.
 The default program is programs/full_isa.hex. It ends in a legal self-loop, not HALT.
 
-Rudraksh owns the test plan, simulation results and verification checklist under
+Bhargav owns the test plan, simulation results and verification checklist under
 docs/verification/. His substantive evidence organization/own-account commit remain
 pending. Phase-4 publication requires explicit approval; phase-5 waits for his handoff.
