@@ -59,6 +59,7 @@ No instruction execution, complete RV32I CPU, synthesis, hardware maximum clock
 frequency or FPGA result is claimed. Raw simulator waveforms exist; screenshots
 and captions for the team's verification documentation remain real member work.
 
-Bhargav's three architecture documents remain assigned outlines. Phase-1 publication
-awaits explicit approval, followed by Bhargav's own substantive contribution and
-commit before phase-2 starts.
+The original phase-1 implementation/evidence was published at 2fe6adb. Under the
+corrected member order, Viraj owns the three architecture documents, which remain
+assigned outlines. His lead implementation commits are genuine existing work;
+the architecture handoff still precedes phase-2. This mapping correction awaits publication.

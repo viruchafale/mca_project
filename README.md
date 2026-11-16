@@ -1,6 +1,6 @@
 # Single-Cycle RV32I Processor
 
-College project by Viraj, Bhargav, Kaustubh, Pratyush and Rudraksh.
+College project by Viraj, Kaustubh, Pratyush, Rudraksh and Bhargav.
 
 **Current development milestone: phase-1 (PC and instruction ROM).**
 The complete ten-instruction CPU is planned; this branch does not execute instructions yet.
@@ -44,11 +44,11 @@ Do not commit machine-specific paths or downloaded tool binaries.
 
 | Branch | Cumulative milestone | Documentation owner |
 |---|---|---|
-| phase-1 | PC, instruction ROM and harness | Bhargav |
+| phase-1 | PC, instruction ROM and harness | Viraj |
 | phase-2 | Register file, immediates and data memory | Kaustubh |
-| phase-3 | ALU, decoder, writeback and arithmetic integration | Viraj |
-| phase-4 | LW/SW, BEQ/BNE and complete CPU regression | Pratyush |
-| phase-5 | Final verification, synthesis and academic deliverables | Rudraksh |
+| phase-3 | ALU, decoder, writeback and arithmetic integration | Pratyush |
+| phase-4 | LW/SW, BEQ/BNE and complete CPU regression | Rudraksh |
+| phase-5 | Final verification, synthesis and academic deliverables | Bhargav |
 
 Target subset: ADD, SUB, AND, OR, XOR, ADDI, LW, SW, BEQ and BNE.
 See [design contract](docs/design-contract.md), [phase progress](docs/project-progress/phase-progress.md),

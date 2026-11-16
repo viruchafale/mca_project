@@ -1,6 +1,6 @@
-# Processor overview — Bhargav's assignment
+# Processor overview — Viraj's assignment
 
-Status: awaiting Bhargav's substantive contribution. This outline was created by the lead.
+Status: awaiting Viraj's substantive contribution. This outline was created by the lead.
 
 Replace this outline with your own explanation after reviewing rtl/pc.v,
 rtl/instruction_memory.v and docs/design-contract.md:

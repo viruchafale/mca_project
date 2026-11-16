@@ -1,6 +1,6 @@
-# Design decisions — Bhargav's assignment
+# Design decisions — Viraj's assignment
 
-Status: awaiting Bhargav's reviewed explanations.
+Status: awaiting Viraj's reviewed explanations.
 
 Explain and justify:
 - Synchronous active-high reset and reset priority over enable.

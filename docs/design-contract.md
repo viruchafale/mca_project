@@ -1,6 +1,7 @@
 # Lead's design contract
 
-Status: implementation specification and phase-1 behavior. This is not Bhargav's contribution.
+Status: lead-prepared implementation specification and phase-1 behavior.
+Assigned architecture explanations remain separate documentation work.
 
 ## Implemented in phase-1
 

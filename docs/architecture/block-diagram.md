@@ -1,6 +1,6 @@
-# Block diagram — Bhargav's assignment
+# Block diagram — Viraj's assignment
 
-Status: awaiting Bhargav's diagram and explanation.
+Status: awaiting Viraj's diagram and explanation.
 
 Draw the implemented PC, PC+4 feedback and instruction ROM with current port names.
 Show clk/reset/enable and address_valid. Explain that feedback comes from the testbench
